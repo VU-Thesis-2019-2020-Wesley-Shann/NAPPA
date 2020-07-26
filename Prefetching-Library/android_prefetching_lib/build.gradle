@@ -41,6 +41,7 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycleVersion"
 
     implementation files('libs')
+    implementation name: 'nappa-experimentation', ext: 'aar'
 
     testImplementation "junit:junit:4.12"
     androidTestImplementation "androidx.test.ext:junit:$junitVersion"
