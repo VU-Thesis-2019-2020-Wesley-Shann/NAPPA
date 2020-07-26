@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricNappaPrefetchingStrategyExecutionTime;
 import nl.vu.cs.s2group.nappa.util.NappaUtil;
 
 /**
@@ -74,7 +75,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
-        long startTime = new Date().getTime();
+        long startTime = System.currentTimeMillis();
 
         // Prepare the graph
         TfprGraph graph = makeSubgraph(node);
@@ -94,6 +95,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 
         // Select all URLs that fits the budget
         List<String> selectedUrls = getUrls(node, selectedNodes);
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, System.currentTimeMillis(), selectedUrls.size());
 
         logStrategyExecutionDuration(node, startTime);
 

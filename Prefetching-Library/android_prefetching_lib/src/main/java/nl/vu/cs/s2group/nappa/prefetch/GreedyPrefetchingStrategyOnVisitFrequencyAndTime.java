@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricNappaPrefetchingStrategyExecutionTime;
 import nl.vu.cs.s2group.nappa.util.NappaConfigMap;
 import nl.vu.cs.s2group.nappa.util.NappaUtil;
 
@@ -58,9 +59,10 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
-        long startTime = new Date().getTime();
+        long startTime = System.currentTimeMillis();
 
         List<String> urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, System.currentTimeMillis(), urls.size());
         logStrategyExecutionDuration(node, startTime);
 
         return urls;
