@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nl.vu.cs.s2group.nappa.Nappa;
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricNappaPrefetchingStrategyExecutionTime;
 import nl.vu.cs.s2group.nappa.util.NappaUtil;
@@ -95,6 +96,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         List<ActivityNode> selectedNodes = getSuccessorListSortByTfprScore(graph, node);
 
         // Select all URLs that fits the budget
+        Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
         List<String> selectedUrls = getUrls(node, selectedNodes);
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
