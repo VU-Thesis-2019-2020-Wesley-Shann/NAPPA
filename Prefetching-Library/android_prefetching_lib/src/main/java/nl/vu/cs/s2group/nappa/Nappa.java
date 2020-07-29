@@ -36,6 +36,7 @@ import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.handler.activity.RegisterNewActivityHandler;
 import nl.vu.cs.s2group.nappa.handler.graph.InitGraphHandler;
 import nl.vu.cs.s2group.nappa.handler.session.RegisterNewSessionHandler;
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricStrategyAccuracy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyConfigKeys;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyType;
@@ -261,6 +262,8 @@ public class Nappa {
                 strategyPredictionHits++;
             else strategyPredictionMisses++;
             madePrediction = false;
+            Nappa.metricStrategyAccuracyID++;
+            MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID, Nappa.strategyPredictionHits, Nappa.strategyPredictionMisses);
         }
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();
