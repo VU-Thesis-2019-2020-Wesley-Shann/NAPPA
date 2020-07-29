@@ -34,6 +34,12 @@ public class NappaLifecycleObserver implements LifecycleObserver {
     public void onDestroy() {
         Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onDestroy");
         Nappa.metricPrefetchingAccuracyID++;
-        MetricPrefetchingAccuracy.log(Nappa.metricPrefetchingAccuracyID, 0, 0, 0);
+        int truePositive = Nappa.list_url_tp.size();
+        int falseNegative = Nappa.list_url_fn.size();
+        int falsePositive = 0;
+        for (String url : Nappa.list_url_prefetched) {
+            if (!Nappa.list_url_intercepted.contains(url)) falsePositive++;
+        }
+        MetricPrefetchingAccuracy.log(Nappa.metricPrefetchingAccuracyID, truePositive, falsePositive, falseNegative);
     }
 }

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.handler.activity.RegisterNewActivityHandler;
 import nl.vu.cs.s2group.nappa.handler.graph.InitGraphHandler;
 import nl.vu.cs.s2group.nappa.handler.session.RegisterNewSessionHandler;
-import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricPrefetchingAccuracy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyConfigKeys;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyType;
@@ -553,12 +553,62 @@ public class Nappa {
         }, 0, TimeUnit.SECONDS);
     }
 
+
+    /* Thesis experimentation for getting F1 Score - Start */
+    static List<String> list_url_prefetched = new ArrayList<>();
+    static List<String> list_url_intercepted = new ArrayList<>();
+    // True positive
+    static List<String> list_url_tp = new ArrayList<>();
+    // False Negative
+    static List<String> list_url_fn = new ArrayList<>();
+
+    private static void add_intercept_url(String url) {
+        if (list_url_intercepted.contains(url)) return;
+        Log.d(LOG_TAG, String.format("F1_SCORE add_intercept_url %s", url));
+        list_url_intercepted.add(url);
+    }
+
+    private static void add_prefetched_url(String url) {
+        if (list_url_prefetched.contains(url)) return;
+        Log.d(LOG_TAG, String.format("F1_SCORE add_prefetched_url %s", url));
+        list_url_prefetched.add(url);
+    }
+
+    private static void add_fn_url(String url) {
+        if (list_url_fn.contains(url)) return;
+        Log.d(LOG_TAG, String.format("F1_SCORE add_fn_url %s", url));
+        list_url_fn.add(url);
+    }
+
+    private static void add_tp_url(String url) {
+        if (list_url_tp.contains(url)) return;
+        Log.d(LOG_TAG, String.format("F1_SCORE add_tp_url %s", url));
+        list_url_fn.remove(url);
+        list_url_tp.add(url);
+    }
+
+    private static void getF1ScoreVariables(String url) {
+        // If is a GET request and it is a prefetch itself then adds to the prefetch list
+        if (libGet) add_prefetched_url(url);
+        else {
+            // If is a GET request and not a prefetch itself, then adds to the intercept list
+            add_intercept_url(url);
+            if (list_url_prefetched.contains(url))
+                // If is a GET request, is not a prefetch itself and was previously prefetched --> add to the TP list
+                add_tp_url(url);
+            else
+                // If is a GET request, is not a prefetch itself and was not previously prefetched --> add to the FN list
+                add_fn_url(url);
+        }
+    }
+    /* Thesis experimentation for getting F1 Score - End */
+
     /**
      * Represents an interceptor to be added to the OkHTTP chain of interceptors
      */
     private static class CustomInterceptor implements Interceptor {
 
-        public Response intercept(Interceptor.Chain chain) throws IOException{
+        public Response intercept(Interceptor.Chain chain) throws IOException {
             Request request = chain.request();
             boolean triggeredByPrefetch = false;
             boolean isGet = request.method().toLowerCase().compareTo("get") == 0;
@@ -569,6 +619,7 @@ public class Nappa {
             if (isGet) {
                 // Perform candidate generation
                 Nappa.checkUrlWithExtras(request.url().toString());
+                getF1ScoreVariables(request.url().toString());
             }
 
             if (request.header("X-PREF") != null) {
@@ -603,6 +654,16 @@ public class Nappa {
                 Log.d(LOG_TAG, name + " " + headers.get(name));
             }
 
+            String cacheMsg = "CACHED STATS: " +
+                    "size = '" + responseLruCache.size() + "', " +
+                    "maxSize = '" + responseLruCache.maxSize() + "', " +
+                    "hitCount = '" + responseLruCache.hitCount() + "', " +
+                    "createCount = '" + responseLruCache.createCount() + "', " +
+                    "putCount = '" + responseLruCache.putCount() + "', " +
+                    "evictionCount = '" + responseLruCache.evictionCount() + "', " +
+                    "missCount = '" + responseLruCache.missCount() + "', " +
+                    "toString = '" + responseLruCache.toString() + "', ";
+            Log.d(LOG_TAG, cacheMsg);
             SimpleResponse cachedResp = responseLruCache.get(request.url().toString());
             // If the request is both a Get request and is cached
             if (isGet && cachedResp != null) {
@@ -703,7 +764,7 @@ public class Nappa {
                 // If the response is successful and if the request is a get request, add the
                 // response to the cache
                 if (response.isSuccessful() && isGet) {
-                    Log.d(LOG_TAG, "PREFLIB " + "Adding response to lrucache");
+                    Log.d(LOG_TAG, "PREFLIB " + "Adding response to lrucache - " + request.url().toString());
                     Float timeToHandle = (response.receivedResponseAtMillis() - response.sentRequestAtMillis()) / 1000f;
                     responseLruCache.put(request.url().toString(), new SimpleResponse(response.body().contentType().toString(), response.body().string(), timeToHandle));
                     cachedResp = responseLruCache.get(request.url().toString());
