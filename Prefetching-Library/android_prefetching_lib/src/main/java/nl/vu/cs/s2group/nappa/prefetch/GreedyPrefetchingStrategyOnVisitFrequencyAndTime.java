@@ -35,6 +35,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     protected final float weightFrequencyScore;
     protected final float weightTimeScore;
 
+    private List<String> already_visited_successors;
+
     @Override
     public boolean needVisitTime() {
         return true;
@@ -60,7 +62,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
-
+        already_visited_successors = new ArrayList<>();
         List<String> urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
         long endTime = System.nanoTime();
         Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
@@ -107,6 +109,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         // Loop all successors and saves the successor with the best score. In case of drawn, the
         //  first current best successor is picked
         for (ActivityNode successor : node.successors.keySet()) {
+            // Skips nodes already selected as best successors
+            if (already_visited_successors.contains(successor.activityName)) continue;
+
             Integer successorFrequency = successorsAggregateFrequencyMap.get(successor.activityName);
             if (successorFrequency == null)
                 throw new NoSuchElementException("Unable to obtain the successor frequency count!");
@@ -137,6 +142,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
         // Add the remaining URLs to the list of URLs to prefetch
         urlList.addAll(bestSuccessorUrls);
+
+        // Register the node as already visited
+        already_visited_successors.add(bestSuccessor.activityName);
 
         // Verifies if there is any URL budget left
         if (urlList.size() >= maxNumberOfUrlToPrefetch) return urlList;
