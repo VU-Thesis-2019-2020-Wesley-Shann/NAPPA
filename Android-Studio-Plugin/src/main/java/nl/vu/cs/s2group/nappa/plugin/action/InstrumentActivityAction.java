@@ -211,12 +211,12 @@ public class InstrumentActivityAction extends AnAction {
      *
      * <p> The following source code is instrumented:
      *
-     * <pre>{@code Prefetch.init(this, PrefetchingStrategy.STRATEGY_GREEDY);}</pre>
+     * <pre>{@code Prefetch.init(this, PrefetchingStrategyType.STRATEGY_GREEDY_VISIT_FREQUENCY);}</pre>
      *
      * @param javaFile The Java file containing the main launcher {@link android.app.Activity}
      */
     private void addLibraryInitializationStatement(@NotNull PsiJavaFile javaFile) {
-        String instrumentedText = "Nappa.init(this, PrefetchingStrategy.STRATEGY_GREEDY);";
+        String instrumentedText = "Nappa.init(this, PrefetchingStrategyType.STRATEGY_GREEDY_VISIT_FREQUENCY);";
         PsiClass[] psiClasses = javaFile.getClasses();
 
         for (PsiClass psiClass : psiClasses) {
