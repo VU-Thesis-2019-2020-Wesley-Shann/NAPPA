@@ -132,7 +132,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             }
         }
 
-        if (bestSuccessor != null && firstNextActivityPredicted != null)
+        if (bestSuccessor != null && firstNextActivityPredicted == null)
             firstNextActivityPredicted = bestSuccessor.activityName;
 
         if (bestSuccessor != null) already_visited_successors.add(bestSuccessor.activityName);
