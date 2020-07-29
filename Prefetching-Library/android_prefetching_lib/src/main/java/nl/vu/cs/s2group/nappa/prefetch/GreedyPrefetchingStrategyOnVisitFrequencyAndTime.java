@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import nl.vu.cs.s2group.nappa.Nappa;
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricNappaPrefetchingStrategyExecutionTime;
 import nl.vu.cs.s2group.nappa.util.NappaConfigMap;
@@ -36,6 +37,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     protected final float weightTimeScore;
 
     private List<String> already_visited_successors;
+
+    String firstNextActivityPredicted = null;
 
     @Override
     public boolean needVisitTime() {
@@ -69,6 +72,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size());
 //        logStrategyExecutionDuration(node, startTime);
+        Nappa.predictedNextActivity = firstNextActivityPredicted;
 
         return urls;
     }
@@ -127,6 +131,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                 bestSuccessorScore = successorScore;
             }
         }
+
+        if (bestSuccessor != null && firstNextActivityPredicted != null)
+            firstNextActivityPredicted = bestSuccessor.activityName;
 
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
         if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) return urlList;

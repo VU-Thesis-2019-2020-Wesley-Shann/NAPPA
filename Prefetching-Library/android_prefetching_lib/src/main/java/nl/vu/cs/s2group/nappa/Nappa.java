@@ -72,7 +72,6 @@ import okhttp3.internal.cache.CacheStrategy;
 
 public class Nappa {
     private static final String LOG_TAG = Nappa.class.getSimpleName();
-    static int metricPrefetchingAccuracyID = 0;
 
     private static Nappa instance;
     private static boolean libGet = false;
@@ -241,6 +240,15 @@ public class Nappa {
 
     }
 
+    /* Thesis experimentation for getting Strategy accuracy - Start */
+    static int metricStrategyAccuracyID = 0;
+    public static String predictedNextActivity = null;
+    static int strategyPredictionHits = 0;
+    static int strategyPredictionMisses = 0;
+    static boolean madePrediction = false;
+
+    /* Thesis experimentation for getting Strategy accuracy - End */
+
     /**
      * Notifies the prefetching library whenever an activity transition takes place
      *
@@ -248,6 +256,12 @@ public class Nappa {
      */
     public static void setCurrentActivity(@NonNull Activity activity) {
         boolean shouldPrefetch;
+        if (madePrediction && predictedNextActivity != null) {
+            if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
+                strategyPredictionHits++;
+            else strategyPredictionMisses++;
+            madePrediction = false;
+        }
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();
         //SHOULD PREFETCH IFF THE USER IS MOVING FORWARD
@@ -267,6 +281,7 @@ public class Nappa {
 
             poolExecutor.schedule(() -> {
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
+                madePrediction = true;
                 for (String url : topNUrls) {
                     Log.d(LOG_TAG, "TO_BE_PREF " + url);
                 }
@@ -555,6 +570,7 @@ public class Nappa {
 
 
     /* Thesis experimentation for getting F1 Score - Start */
+    static int metricPrefetchingAccuracyID = 0;
     static List<String> list_url_prefetched = new ArrayList<>();
     static List<String> list_url_intercepted = new ArrayList<>();
     // True positive

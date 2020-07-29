@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricPrefetchingAccuracy;
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricStrategyAccuracy;
 
 public class NappaLifecycleObserver implements LifecycleObserver {
     private static final String LOG_TAG = NappaLifecycleObserver.class.getSimpleName();
@@ -22,6 +23,8 @@ public class NappaLifecycleObserver implements LifecycleObserver {
     public void onResume() {
         Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onResume");
         Nappa.setCurrentActivity(activity);
+        Nappa.metricStrategyAccuracyID++;
+        MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID, Nappa.strategyPredictionHits, Nappa.strategyPredictionMisses);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
