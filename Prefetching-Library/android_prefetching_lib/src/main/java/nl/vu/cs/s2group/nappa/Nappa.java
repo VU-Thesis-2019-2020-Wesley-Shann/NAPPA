@@ -556,7 +556,7 @@ public class Nappa {
      */
     private static class CustomInterceptor implements Interceptor {
 
-        public Response intercept(Interceptor.Chain chain) {
+        public Response intercept(Interceptor.Chain chain) throws IOException{
             Request request = chain.request();
             boolean triggeredByPrefetch = false;
             boolean isGet = request.method().toLowerCase().compareTo("get") == 0;
@@ -628,10 +628,10 @@ public class Nappa {
             } else {
                 Log.d(LOG_TAG, "PREFLIB " + "NOT A GET REQUEST OR NOT IN CACHE" + request.method());
             }
-
+            Response response = null;
             try {
                 // Execute the request
-                Response response = chain.proceed(request);
+                response = chain.proceed(request);
                 if (!libGet) requestNP++;
                 // Insert the new request
 
@@ -720,7 +720,7 @@ public class Nappa {
                 exception.printStackTrace();
             }
 
-            return null;
+            return response != null ? response : chain.proceed(chain.request());
         }
     }
 
