@@ -7,6 +7,8 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricPrefetchingAccuracy;
+
 public class NappaLifecycleObserver implements LifecycleObserver {
     private static final String LOG_TAG = NappaLifecycleObserver.class.getSimpleName();
 
@@ -26,5 +28,12 @@ public class NappaLifecycleObserver implements LifecycleObserver {
     public void onPause() {
         Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onPause");
         Nappa.leavingCurrentActivity();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    public void onDestroy() {
+        Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onDestroy");
+        Nappa.metricPrefetchingAccuracyID++;
+        MetricPrefetchingAccuracy.log(Nappa.metricPrefetchingAccuracyID, 0, 0, 0);
     }
 }

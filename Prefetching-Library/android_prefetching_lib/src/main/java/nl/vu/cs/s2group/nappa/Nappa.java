@@ -35,6 +35,7 @@ import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.handler.activity.RegisterNewActivityHandler;
 import nl.vu.cs.s2group.nappa.handler.graph.InitGraphHandler;
 import nl.vu.cs.s2group.nappa.handler.session.RegisterNewSessionHandler;
+import nl.vu.cs.s2group.nappa.nappaexperimentation.MetricPrefetchingAccuracy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategy;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyConfigKeys;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategyType;
@@ -71,6 +72,7 @@ import okhttp3.internal.cache.CacheStrategy;
 
 public class Nappa {
     private static final String LOG_TAG = Nappa.class.getSimpleName();
+    static int metricPrefetchingAccuracyID = 0;
 
     private static Nappa instance;
     private static boolean libGet = false;
