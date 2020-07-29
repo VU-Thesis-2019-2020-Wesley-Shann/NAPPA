@@ -101,7 +101,7 @@ public abstract class AbstractPrefetchingStrategy implements PrefetchingStrategy
      */
     protected void logStrategyExecutionDuration(@NotNull ActivityNode activity, long startTime) {
         Log.d(this.getClass().getSimpleName(), "Prefetching strategy calculations for " +
-                activity.getSuccessorsVisitTimeList() +
+                activity.getActivitySimpleName() +
                 " was finished in " +
                 (new Date().getTime() - startTime) + " ms");
     }
