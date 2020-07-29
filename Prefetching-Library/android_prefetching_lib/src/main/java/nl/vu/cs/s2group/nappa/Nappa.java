@@ -563,7 +563,7 @@ public class Nappa {
     static List<String> list_url_fn = new ArrayList<>();
 
     private static void log_f1_data(String url, String method, boolean already_added) {
-        Log.d(LOG_TAG, String.format("F1_SCORE %s - %s - %s", method, already_added ? "(new)" : "(already in)", url));
+        Log.d(LOG_TAG, String.format("F1_SCORE %s - %s - %s", method, already_added ? "(already in)" : "(new)", url));
     }
 
     private static void add_intercept_url(String url) {
