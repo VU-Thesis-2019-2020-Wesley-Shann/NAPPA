@@ -75,7 +75,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
-        long startTime = System.currentTimeMillis();
+        long startTime = System.nanoTime();
+//        long startTime = System.currentTimeMillis();
 
         // Prepare the graph
         TfprGraph graph = makeSubgraph(node);
@@ -95,9 +96,11 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 
         // Select all URLs that fits the budget
         List<String> selectedUrls = getUrls(node, selectedNodes);
-        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, System.currentTimeMillis(), selectedUrls.size());
+        long endTime = System.nanoTime();
+//        long endTime = System.currentTimeMillis();
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size());
 
-        logStrategyExecutionDuration(node, startTime);
+//        logStrategyExecutionDuration(node, startTime);
 
         return selectedUrls;
     }
