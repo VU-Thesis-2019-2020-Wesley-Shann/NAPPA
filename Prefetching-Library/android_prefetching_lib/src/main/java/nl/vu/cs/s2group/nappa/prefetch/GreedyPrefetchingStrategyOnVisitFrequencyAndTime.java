@@ -135,6 +135,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         if (bestSuccessor != null && firstNextActivityPredicted != null)
             firstNextActivityPredicted = bestSuccessor.activityName;
 
+        if (bestSuccessor != null) already_visited_successors.add(bestSuccessor.activityName);
+
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
         if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) return urlList;
 
@@ -151,7 +153,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         urlList.addAll(bestSuccessorUrls);
 
         // Register the node as already visited
-        already_visited_successors.add(bestSuccessor.activityName);
+
 
         // Verifies if there is any URL budget left
         if (urlList.size() >= maxNumberOfUrlToPrefetch) return urlList;
