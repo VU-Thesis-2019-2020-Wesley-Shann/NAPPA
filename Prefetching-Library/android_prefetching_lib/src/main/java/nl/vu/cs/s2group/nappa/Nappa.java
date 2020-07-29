@@ -562,27 +562,43 @@ public class Nappa {
     // False Negative
     static List<String> list_url_fn = new ArrayList<>();
 
+    private static void log_f1_data(String url, String method, boolean already_added) {
+        Log.d(LOG_TAG, String.format("F1_SCORE %s - %s - %s", method, already_added ? "(new)" : "(already in)", url));
+    }
+
     private static void add_intercept_url(String url) {
-        if (list_url_intercepted.contains(url)) return;
-        Log.d(LOG_TAG, String.format("F1_SCORE add_intercept_url %s", url));
+        if (list_url_intercepted.contains(url)) {
+            log_f1_data(url, "add_intercept_url", true);
+            return;
+        }
+        log_f1_data(url, "add_intercept_url", false);
         list_url_intercepted.add(url);
     }
 
     private static void add_prefetched_url(String url) {
-        if (list_url_prefetched.contains(url)) return;
-        Log.d(LOG_TAG, String.format("F1_SCORE add_prefetched_url %s", url));
+        if (list_url_prefetched.contains(url)) {
+            log_f1_data(url, "list_url_prefetched", true);
+            return;
+        }
+        log_f1_data(url, "list_url_prefetched", false);
         list_url_prefetched.add(url);
     }
 
     private static void add_fn_url(String url) {
-        if (list_url_fn.contains(url)) return;
-        Log.d(LOG_TAG, String.format("F1_SCORE add_fn_url %s", url));
+        if (list_url_fn.contains(url)) {
+            log_f1_data(url, "add_fn_url", true);
+            return;
+        }
+        log_f1_data(url, "add_fn_url", false);
         list_url_fn.add(url);
     }
 
     private static void add_tp_url(String url) {
-        if (list_url_tp.contains(url)) return;
-        Log.d(LOG_TAG, String.format("F1_SCORE add_tp_url %s", url));
+        if (list_url_tp.contains(url)) {
+            log_f1_data(url, "add_tp_url", true);
+            return;
+        }
+        log_f1_data(url, "add_tp_url", false);
         list_url_fn.remove(url);
         list_url_tp.add(url);
     }
