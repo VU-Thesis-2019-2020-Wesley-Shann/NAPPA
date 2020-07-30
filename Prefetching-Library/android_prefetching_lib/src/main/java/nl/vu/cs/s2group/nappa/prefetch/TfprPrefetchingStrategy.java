@@ -100,7 +100,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         List<String> selectedUrls = getUrls(node, selectedNodes);
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
-        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size());
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size());
 
 //        logStrategyExecutionDuration(node, startTime);
 
