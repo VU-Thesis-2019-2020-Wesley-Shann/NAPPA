@@ -70,6 +70,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         recursionCount = 0;
         firstNextActivityPredicted = null;
         Log.d(LOG_TAG, "------------- Run #" + runCount + " -----------");
+        Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
         already_visited_successors = new ArrayList<>();
