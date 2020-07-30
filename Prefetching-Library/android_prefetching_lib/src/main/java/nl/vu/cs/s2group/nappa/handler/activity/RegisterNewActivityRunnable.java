@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java9.util.function.Consumer;
 
+import java9.util.function.Consumer;
 import nl.vu.cs.s2group.nappa.graph.ActivityGraph;
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
 import nl.vu.cs.s2group.nappa.prefetch.PrefetchingStrategy;
@@ -42,6 +42,10 @@ public class RegisterNewActivityRunnable implements Runnable {
 
     @Override
     public void run() {
+        if (NappaDB.getInstance().activityDao().getByName(activityName) == null) {
+            Log.d(LOG_TAG, "Activity is already registered: " + activityName);
+            return;
+        }
         long start = new Date().getTime();
         ActivityData activity = new ActivityData(activityName);
         activity.id = NappaDB.getInstance().activityDao().insert(activity);

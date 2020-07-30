@@ -16,6 +16,11 @@ public interface ActivityTableDao {
     @Insert
     long insert(ActivityData activityData);
 
+    @Query("SELECT * " +
+            "FROM nappa_activity " +
+            "WHERE activity_name == :name ")
+    ActivityData getByName(String name);
+
     @Query("SELECT id, activity_name FROM nappa_activity")
     List<ActivityData> getListActivity();
 
