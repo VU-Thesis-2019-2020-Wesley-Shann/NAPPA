@@ -42,8 +42,9 @@ public class RegisterNewActivityRunnable implements Runnable {
 
     @Override
     public void run() {
-        if (NappaDB.getInstance().activityDao().getByName(activityName) != null) {
-            Log.d(LOG_TAG, "Activity is already registered: " + activityName);
+        ActivityData activityData = NappaDB.getInstance().activityDao().getByName(activityName);
+        if (activityData != null) {
+            Log.d(LOG_TAG, "Activity is already registered: " + activityData.toString());
             return;
         }
         long start = new Date().getTime();
