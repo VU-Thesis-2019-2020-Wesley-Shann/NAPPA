@@ -398,9 +398,10 @@ public class Nappa {
                     // Put on this extras tracker for this activity the new key-value pair. If
                     //    No value has been associated with this extra, NULL will be stored
                     Object value = allExtras.get(key);
-                    if (value == null)
-                        throw new IllegalArgumentException("Unable to find Intent Extra with key " + key);
-                    extras.put(key, value.toString());
+//                    if (value == null)
+//                        throw new IllegalArgumentException("Unable to find Intent Extra with key " + key);
+                    String valueStr = value == null ? null : value.toString();
+                    extras.put(key, valueStr);
                 }
 
                 // Update the global extras map after all extras have been stored
@@ -431,10 +432,11 @@ public class Nappa {
                     for (String key : allExtras.keySet()) {
                         // Create an Database Object and store it
                         Object value = allExtras.get(key);
-                        if (value == null)
-                            throw new IllegalArgumentException("Unable to find Intent Extra with key " + key);
+//                        if (value == null)
+//                            throw new IllegalArgumentException("Unable to find Intent Extra with key " + key);
+                        String valueStr = value == null ? null : value.toString();
                         ActivityExtraData activityExtraData =
-                                new ActivityExtraData(session.id, idAct, key, value.toString());
+                                new ActivityExtraData(session.id, idAct, key, valueStr);
                         Log.d(LOG_TAG, "PREFSTRAT2 " + "ADDING NEW ACTEXTRADATA");
                         NappaDB.getInstance().activityExtraDao().insertActivityExtra(activityExtraData);
                     }
