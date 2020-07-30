@@ -69,7 +69,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         runCount++;
         recursionCount = 0;
         firstNextActivityPredicted = null;
-        Log.d(LOG_TAG, "------------- Run #" + runCount + " -----------");
+        Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
         Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
@@ -82,6 +82,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
         Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted + "\n");
+        Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
 
         return urls;
     }
