@@ -40,6 +40,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
     String firstNextActivityPredicted = null;
 
+    private int runCount = 0;
+    private int recursionCount;
+
     @Override
     public boolean needVisitTime() {
         return true;
@@ -63,6 +66,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
+        runCount++;
+        recursionCount = 0;
+        Log.d(LOG_TAG, "------------- Run #" + runCount + " -----------");
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
         already_visited_successors = new ArrayList<>();
@@ -102,6 +108,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
      * @return The {@code urlList} after completing all recursions
      */
     private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList) {
+        Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
         // Fetches the data to start the calculations - Aggregate visit time and frequency
         float totalAggregateTime = NappaUtil.getSuccessorsAggregateVisitTime(node);
         int totalAggregateFrequency = NappaUtil.getSuccessorsTotalAggregateVisitFrequency(node, lastNSessions);
@@ -126,7 +133,10 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
             float successorScore = parentScore * (successorTimeScore + successorFrequencyScore);
 
+            Log.d(LOG_TAG, "Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
+
             if (bestSuccessor == null || successorScore > bestSuccessorScore) {
+                Log.d(LOG_TAG, "Switch best successor");
                 bestSuccessor = successor;
                 bestSuccessorScore = successorScore;
             }
@@ -144,8 +154,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         int remainingUrlBudget = maxNumberOfUrlToPrefetch - urlList.size();
         List<String> bestSuccessorUrls = NappaUtil.getUrlsFromCandidateNode(node, bestSuccessor, remainingUrlBudget);
 
-        Log.d(LOG_TAG, node.activityName +
-                " best successor is " + bestSuccessor.activityName +
+        Log.d(LOG_TAG, node.getActivitySimpleName() +
+                " best successor is " + bestSuccessor.getActivitySimpleName() +
                 " with score " + bestSuccessorScore +
                 " containing the URLS " + bestSuccessorUrls);
 
