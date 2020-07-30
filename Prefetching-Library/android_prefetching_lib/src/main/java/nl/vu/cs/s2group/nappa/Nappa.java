@@ -258,13 +258,13 @@ public class Nappa {
      */
     public static void setCurrentActivity(@NonNull Activity activity) {
         boolean shouldPrefetch;
-        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
-                "madePrediction = " + madePrediction + ", " +
-                "predictedNextActivity = " + predictedNextActivity + ", " +
-                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", ");
+//        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+//                "madePrediction = " + madePrediction + ", " +
+//                "predictedNextActivity = " + predictedNextActivity + ", " +
+//                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", ");
         if (madePrediction && predictedNextActivity != null) {
-            Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
-                    "checking prediction VS current activity");
+//            Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+//                    "checking prediction VS current activity");
             if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
                 strategyPredictionHits++;
             else strategyPredictionMisses++;
@@ -596,7 +596,7 @@ public class Nappa {
     static List<String> list_url_fn = new ArrayList<>();
 
     private static void log_f1_data(String url, String method, boolean already_added) {
-        Log.d(LOG_TAG, String.format("F1_SCORE %s - %s - %s", method, already_added ? "(already in)" : "(new)", url));
+//        Log.d(LOG_TAG, String.format("F1_SCORE %s - %s - %s", method, already_added ? "(already in)" : "(new)", url));
     }
 
     private static void add_intercept_url(String url) {

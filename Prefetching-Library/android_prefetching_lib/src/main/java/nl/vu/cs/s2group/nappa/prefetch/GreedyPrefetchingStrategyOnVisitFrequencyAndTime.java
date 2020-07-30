@@ -75,7 +75,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         already_visited_successors = new ArrayList<>();
         List<String> urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
         long endTime = System.nanoTime();
-        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
+//        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
 //        logStrategyExecutionDuration(node, startTime);
@@ -111,8 +111,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
      */
     private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList) {
         recursionCount++;
-        Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
-        Log.d(LOG_TAG, "Best successors so far " + already_visited_successors.toString());
+//        Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
+//        Log.d(LOG_TAG, "Best successors so far " + already_visited_successors.toString());
         // Fetches the data to start the calculations - Aggregate visit time and frequency
         float totalAggregateTime = NappaUtil.getSuccessorsAggregateVisitTime(node);
         int totalAggregateFrequency = NappaUtil.getSuccessorsTotalAggregateVisitFrequency(node, lastNSessions);
@@ -137,10 +137,10 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
             float successorScore = parentScore * (successorTimeScore + successorFrequencyScore);
 
-            Log.d(LOG_TAG, "Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
+//            Log.d(LOG_TAG, "Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
 
             if (bestSuccessor == null || successorScore > bestSuccessorScore) {
-                Log.d(LOG_TAG, "Switch best successor");
+//                Log.d(LOG_TAG, "Switch best successor");
                 bestSuccessor = successor;
                 bestSuccessorScore = successorScore;
             }
