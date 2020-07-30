@@ -399,18 +399,24 @@ public class Nappa {
                 // Update the global extras map after all extras have been stored
                 extrasMap.put(idAct, extras);
 
+                /*
+                 Since this method is triggered right before navigating to another activity, and thus
+                 right before the setCurrentActivity method, there is no need to trigger the prefetching
+                 here, as we might end up choosing a activity different than the one we navigated to
+                 and thus performing unnecessary prefetches
+                 */
                 // Begin Generating URL Candidates
-                poolExecutor.schedule(() -> {
-                    List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
-                    for (String url : toBePrefetched) {
-                        Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);
-                    }
-                    // Trigger Prefetching
-                    if (prefetchEnabled) {
-                        prefetchUrls(toBePrefetched);
-                    }
-
-                }, 0, TimeUnit.SECONDS);
+//                poolExecutor.schedule(() -> {
+//                    List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
+//                    for (String url : toBePrefetched) {
+//                        Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);
+//                    }
+//                    // Trigger Prefetching
+//                    if (prefetchEnabled) {
+//                        prefetchUrls(toBePrefetched);
+//                    }
+//
+//                }, 0, TimeUnit.SECONDS);
 
                 // Store the extras identified for a given activity in the database
                 poolExecutor.schedule(() -> {
