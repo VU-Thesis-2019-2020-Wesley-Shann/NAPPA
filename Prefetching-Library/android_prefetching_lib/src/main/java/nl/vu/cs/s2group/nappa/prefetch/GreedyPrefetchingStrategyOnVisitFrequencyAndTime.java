@@ -108,7 +108,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
      * @return The {@code urlList} after completing all recursions
      */
     private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList) {
+        recursionCount++;
         Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
+        Log.d(LOG_TAG, "Best successors so far " + already_visited_successors.toString());
         // Fetches the data to start the calculations - Aggregate visit time and frequency
         float totalAggregateTime = NappaUtil.getSuccessorsAggregateVisitTime(node);
         int totalAggregateFrequency = NappaUtil.getSuccessorsTotalAggregateVisitFrequency(node, lastNSessions);
@@ -121,7 +123,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         //  first current best successor is picked
         for (ActivityNode successor : node.successors.keySet()) {
             // Skips nodes already selected as best successors
-            if (already_visited_successors.contains(successor.activityName)) continue;
+            if (already_visited_successors.contains(successor.getActivitySimpleName())) continue;
 
             Integer successorFrequency = successorsAggregateFrequencyMap.get(successor.activityName);
             if (successorFrequency == null)
@@ -142,7 +144,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             }
         }
 
-        if (bestSuccessor != null) already_visited_successors.add(bestSuccessor.activityName);
+        if (bestSuccessor != null) already_visited_successors.add(bestSuccessor.getActivitySimpleName());
 
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
         if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) return urlList;
