@@ -81,7 +81,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
-        Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted);
+        Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted + "\n");
 
         return urls;
     }
@@ -114,6 +114,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         recursionCount++;
         Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
         Log.d(LOG_TAG, "Best successors so far " + already_visited_successors.toString());
+        Log.d(LOG_TAG, "Checking node " + node.getActivitySimpleName() + " with " + node.successors.size() + " successors");
         // Fetches the data to start the calculations - Aggregate visit time and frequency
         float totalAggregateTime = NappaUtil.getSuccessorsAggregateVisitTime(node);
         int totalAggregateFrequency = NappaUtil.getSuccessorsTotalAggregateVisitFrequency(node, lastNSessions);
