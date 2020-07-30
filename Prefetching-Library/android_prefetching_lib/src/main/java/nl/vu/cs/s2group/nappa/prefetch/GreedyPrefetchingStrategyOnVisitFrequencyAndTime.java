@@ -68,6 +68,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
         runCount++;
         recursionCount = 0;
+        firstNextActivityPredicted = null;
         Log.d(LOG_TAG, "------------- Run #" + runCount + " -----------");
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
@@ -79,6 +80,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
+        Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted);
 
         return urls;
     }
