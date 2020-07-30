@@ -269,6 +269,7 @@ public class Nappa {
                 strategyPredictionHits++;
             else strategyPredictionMisses++;
             madePrediction = false;
+            predictedNextActivity = null;
             Nappa.metricStrategyAccuracyID++;
             MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID, Nappa.strategyPredictionHits, Nappa.strategyPredictionMisses);
         }
