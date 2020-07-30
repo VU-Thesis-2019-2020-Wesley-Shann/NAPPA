@@ -182,6 +182,7 @@ public class Nappa {
      */
     public static void registerActivity(String activityName) {
         if (activityMap.containsKey(activityName)) return;
+        Log.d(LOG_TAG, "registerActivity: " + activityName);
 
         RegisterNewActivityHandler.run(activityName,
                 strategyIntent,
