@@ -258,7 +258,13 @@ public class Nappa {
      */
     public static void setCurrentActivity(@NonNull Activity activity) {
         boolean shouldPrefetch;
+        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+                "madePrediction = " + madePrediction + ", " +
+                "predictedNextActivity = " + predictedNextActivity + ", " +
+                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", ");
         if (madePrediction && predictedNextActivity != null) {
+            Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+                    "checking prediction VS current activity");
             if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
                 strategyPredictionHits++;
             else strategyPredictionMisses++;
