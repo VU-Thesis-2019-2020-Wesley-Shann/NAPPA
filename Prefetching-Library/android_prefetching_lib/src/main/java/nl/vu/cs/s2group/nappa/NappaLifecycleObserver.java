@@ -34,10 +34,10 @@ public class NappaLifecycleObserver implements LifecycleObserver {
     public void onDestroy() {
         Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onDestroy");
         Log.d(LOG_TAG, "-------------F1_SCORE #" + Nappa.metricPrefetchingAccuracyID + " -----------");
-        Log.d(LOG_TAG, "F1_SCORE - " + "Intercept list = " + Nappa.list_url_intercepted.toString());
-        Log.d(LOG_TAG, "F1_SCORE - " + "Prefetch list = " + Nappa.list_url_prefetched.toString());
-        Log.d(LOG_TAG, "F1_SCORE - " + "TP list = " + Nappa.list_url_tp.toString());
-        Log.d(LOG_TAG, "F1_SCORE - " + "FN list = " + Nappa.list_url_fn.toString());
+        Log.d(LOG_TAG, "F1_SCORE - " + "Intercept list (" + Nappa.list_url_intercepted.size() + ")= " + Nappa.list_url_intercepted.toString());
+        Log.d(LOG_TAG, "F1_SCORE - " + "Prefetch list (" + Nappa.list_url_prefetched.size() + ")= " + Nappa.list_url_prefetched.toString());
+        Log.d(LOG_TAG, "F1_SCORE - " + "TP list (" + Nappa.list_url_tp.size() + ")= " + Nappa.list_url_tp.toString());
+        Log.d(LOG_TAG, "F1_SCORE - " + "FN list (" + Nappa.list_url_fn.size() + ")= " + Nappa.list_url_fn.toString());
         Nappa.metricPrefetchingAccuracyID++;
         int truePositive = Nappa.list_url_tp.size();
         int falseNegative = Nappa.list_url_fn.size();
