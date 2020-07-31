@@ -142,8 +142,12 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         // Loop all successors and saves the successor with the best score. In case of drawn, the
         //  first current best successor is picked
         for (ActivityNode successor : node.successors.keySet()) {
+            logs.add("Check successor " + successor.getActivitySimpleName());
             // Skips nodes already selected as best successors
-            if (already_visited_successors.contains(successor.getActivitySimpleName())) continue;
+            if (already_visited_successors.contains(successor.getActivitySimpleName())) {
+                logs.add("This successor was visited in a previous recursion");
+                continue;
+            }
 
             Integer successorFrequency = successorsAggregateFrequencyMap.get(successor.activityName);
             if (successorFrequency == null)
@@ -154,8 +158,16 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             float successorFrequencyScore = totalAggregateFrequency == 0 ? 0 : ((float) successorFrequency / totalAggregateFrequency * weightFrequencyScore);
 
             float successorScore = parentScore * (successorTimeScore + successorFrequencyScore);
-
-            logs.add("Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + " (score =" + successorScore + ")");
+            logs.add("Data:");
+            logs.add("\t- Successor time = " + successorTime);
+            logs.add("\t- Successor frequency = " + successorFrequency);
+            logs.add("\t- Aggregated time = " + totalAggregateTime);
+            logs.add("\t- Aggregated frequency = " + totalAggregateFrequency);
+            logs.add("Calculated scores:");
+            logs.add("\t- Parent score = " + parentScore);
+            logs.add("\t- Successor time score = " + successorTimeScore);
+            logs.add("\t- Successor frequency score = " + successorFrequencyScore);
+            logs.add("\t- Successor final score = " + successorScore);
 
             if (bestSuccessor == null || successorScore > bestSuccessorScore) {
                 logs.add("Switch best successor");
