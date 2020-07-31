@@ -155,7 +155,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
             float successorScore = parentScore * (successorTimeScore + successorFrequencyScore);
 
-            logs.add("Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
+            logs.add("Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + " (score =" + successorScore + ")");
 
             if (bestSuccessor == null || successorScore > bestSuccessorScore) {
                 logs.add("Switch best successor");
@@ -164,11 +164,15 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             }
         }
 
+        // Register the node as already visited
         if (bestSuccessor != null)
             already_visited_successors.add(bestSuccessor.getActivitySimpleName());
 
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
-        if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) return urlList;
+        if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) {
+            logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
+            return urlList;
+        }
 
         if (firstNextActivityPredicted == null)
             firstNextActivityPredicted = bestSuccessor.activityName;
@@ -185,7 +189,6 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         // Add the remaining URLs to the list of URLs to prefetch
         urlList.addAll(bestSuccessorUrls);
 
-        // Register the node as already visited
 
 
         // Verifies if there is any URL budget left
