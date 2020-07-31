@@ -90,7 +90,7 @@ public class ActivityNode {
     }
 
     public AggregateVisitTimeByActivity getAggregateVisitTime() {
-        return aggregateVisitTime;
+        return aggregateVisitTime == null ? new AggregateVisitTimeByActivity(activityName, 0) : aggregateVisitTime;
     }
 
     /**

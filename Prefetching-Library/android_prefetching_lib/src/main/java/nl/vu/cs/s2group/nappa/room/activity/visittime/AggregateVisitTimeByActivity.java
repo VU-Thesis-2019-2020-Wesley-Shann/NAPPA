@@ -8,6 +8,14 @@ public class AggregateVisitTimeByActivity {
     public String activityName;
     public long totalDuration;
 
+    public AggregateVisitTimeByActivity() {
+    }
+
+    public AggregateVisitTimeByActivity(String activityName, long totalDuration) {
+        this.activityName = activityName;
+        this.totalDuration = totalDuration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
