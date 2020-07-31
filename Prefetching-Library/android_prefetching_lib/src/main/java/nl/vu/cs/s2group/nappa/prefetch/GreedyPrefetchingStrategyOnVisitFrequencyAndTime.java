@@ -76,7 +76,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         already_visited_successors = new ArrayList<>();
         List<String> urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
         long endTime = System.nanoTime();
-        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
+//        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
 //        logStrategyExecutionDuration(node, startTime);

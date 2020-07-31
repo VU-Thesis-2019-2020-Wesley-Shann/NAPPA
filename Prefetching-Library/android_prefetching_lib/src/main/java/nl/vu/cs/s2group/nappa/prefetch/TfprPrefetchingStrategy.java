@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,8 @@ import nl.vu.cs.s2group.nappa.util.NappaUtil;
  */
 public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     private static final String LOG_TAG = TfprPrefetchingStrategy.class.getSimpleName();
+
+    private int runCount = 0;
 
     public TfprPrefetchingStrategy() {
         super();
@@ -76,6 +77,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
+        runCount++;
+        Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
+        Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
 
@@ -96,11 +100,13 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         List<ActivityNode> selectedNodes = getSuccessorListSortByTfprScore(graph, node);
 
         // Select all URLs that fits the budget
-        Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
         List<String> selectedUrls = getUrls(node, selectedNodes);
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size());
+        Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
+        Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
+        Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
 
 //        logStrategyExecutionDuration(node, startTime);
 
@@ -150,6 +156,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             }
         }
 
+        Log.d(LOG_TAG, "successors with high score = " + sortedSuccessorsAboveThreshold.toString());
+
         return sortedSuccessorsAboveThreshold;
     }
 
@@ -161,6 +169,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      */
     private void runTfprAlgorithm(TfprGraph graph) {
         for (int i = 0; i < numberOfIterations; i++) {
+            Log.d(LOG_TAG, "------------- TFPR calculation #" + (i + 1) + "/ " + (numberOfIterations) + " -----------");
             for (TfprNode node : graph.graph.values()) {
                 // This variable needs a better name
                 float sumBu = 0;
@@ -172,6 +181,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 }
 
                 node.tfprScore = dampingFactor * node.aggregateVisitTime / graph.aggregateVisitTime + (1 - dampingFactor) * sumBu;
+                Log.d(LOG_TAG, "node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
             }
         }
     }
