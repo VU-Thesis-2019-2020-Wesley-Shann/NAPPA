@@ -85,6 +85,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         logs = new ArrayList<>();
         List<String> selectedUrls;
         List<ActivityNode> selectedNodes;
+        boolean wasSuccessful;
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
         try {
@@ -106,14 +107,16 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 
             // Select all URLs that fits the budget
             selectedUrls = getUrls(node, selectedNodes);
+            wasSuccessful = true;
         } catch (Exception e) {
+            wasSuccessful = false;
             selectedUrls = new ArrayList<>();
             selectedNodes = new ArrayList<>();
             logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
         }
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
-        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size());
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
         Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
         Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
         Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");

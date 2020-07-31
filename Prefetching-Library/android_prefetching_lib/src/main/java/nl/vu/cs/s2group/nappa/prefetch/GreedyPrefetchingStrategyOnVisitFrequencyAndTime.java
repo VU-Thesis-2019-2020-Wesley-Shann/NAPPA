@@ -74,20 +74,23 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         logs = new ArrayList<>();
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
         Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
+        boolean wasSuccessful;
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
         already_visited_successors = new ArrayList<>();
         List<String> urls;
         try {
             urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
+            wasSuccessful = true;
         } catch (Exception e) {
             urls = new ArrayList<>();
+            wasSuccessful = false;
             logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
         }
         long endTime = System.nanoTime();
 //        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
 //        long endTime = System.currentTimeMillis();
-        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
+        MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size(), wasSuccessful);
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
         for (String log : logs) {
