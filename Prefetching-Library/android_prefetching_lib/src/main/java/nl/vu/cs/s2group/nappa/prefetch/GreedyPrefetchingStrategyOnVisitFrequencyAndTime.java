@@ -73,7 +73,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         firstNextActivityPredicted = null;
         logs = new ArrayList<>();
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
-        Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
+        Log.d(LOG_TAG, "Node data " + node.toString());
         boolean wasSuccessful;
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();

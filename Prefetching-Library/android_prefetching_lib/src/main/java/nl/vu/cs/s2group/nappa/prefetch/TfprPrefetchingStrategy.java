@@ -81,7 +81,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
         runCount++;
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
-        Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
+        Log.d(LOG_TAG, "Node data " + node.toString());
         logs = new ArrayList<>();
         List<String> selectedUrls;
         List<ActivityNode> selectedNodes;
