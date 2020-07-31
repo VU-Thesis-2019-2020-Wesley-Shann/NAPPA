@@ -182,7 +182,10 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
         if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) {
-            logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
+            if (bestSuccessor == null)
+                logs.add("this node has no successors");
+            else
+                logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
             return urlList;
         }
 
@@ -200,7 +203,6 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
         // Add the remaining URLs to the list of URLs to prefetch
         urlList.addAll(bestSuccessorUrls);
-
 
 
         // Verifies if there is any URL budget left
