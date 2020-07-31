@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -39,6 +40,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     private List<String> already_visited_successors;
 
     String firstNextActivityPredicted = null;
+    List<String> logs;
 
     private int runCount = 0;
     private int recursionCount;
@@ -69,18 +71,28 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         runCount++;
         recursionCount = 0;
         firstNextActivityPredicted = null;
+        logs = new ArrayList<>();
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
         Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
         already_visited_successors = new ArrayList<>();
-        List<String> urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
+        List<String> urls;
+        try {
+            urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
+        } catch (Exception e) {
+            urls = new ArrayList<>();
+            logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
+        }
         long endTime = System.nanoTime();
 //        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size());
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
+        for (String log : logs) {
+            Log.d(LOG_TAG, log);
+        }
         Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted + "\n");
         Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
 
@@ -113,9 +125,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
      */
     private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList) {
         recursionCount++;
-        Log.d(LOG_TAG, "------------- Recursion #" + recursionCount + " -----------");
-        Log.d(LOG_TAG, "Best successors so far " + already_visited_successors.toString());
-        Log.d(LOG_TAG, "Checking node " + node.getActivitySimpleName() + " with " + node.successors.size() + " successors");
+        logs.add("------------- Recursion #" + recursionCount + " -----------");
+        logs.add("Best successors so far " + already_visited_successors.toString());
+        logs.add("Checking node " + node.getActivitySimpleName() + " with " + node.successors.size() + " successors");
         // Fetches the data to start the calculations - Aggregate visit time and frequency
         float totalAggregateTime = NappaUtil.getSuccessorsAggregateVisitTime(node);
         int totalAggregateFrequency = NappaUtil.getSuccessorsTotalAggregateVisitFrequency(node, lastNSessions);
@@ -140,16 +152,17 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
             float successorScore = parentScore * (successorTimeScore + successorFrequencyScore);
 
-            Log.d(LOG_TAG, "Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
+            logs.add("Parent " + node.getActivitySimpleName() + " - sucessor " + successor.getActivitySimpleName() + "(" + successorScore + ")");
 
             if (bestSuccessor == null || successorScore > bestSuccessorScore) {
-                Log.d(LOG_TAG, "Switch best successor");
+                logs.add("Switch best successor");
                 bestSuccessor = successor;
                 bestSuccessorScore = successorScore;
             }
         }
 
-        if (bestSuccessor != null) already_visited_successors.add(bestSuccessor.getActivitySimpleName());
+        if (bestSuccessor != null)
+            already_visited_successors.add(bestSuccessor.getActivitySimpleName());
 
         // Verifies if this node has any successor. If it has, verifies if the successor with the best score has a score high enough
         if (bestSuccessor == null || bestSuccessorScore < scoreLowerThreshold) return urlList;
@@ -161,7 +174,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         int remainingUrlBudget = maxNumberOfUrlToPrefetch - urlList.size();
         List<String> bestSuccessorUrls = NappaUtil.getUrlsFromCandidateNode(node, bestSuccessor, remainingUrlBudget);
 
-        Log.d(LOG_TAG, node.getActivitySimpleName() +
+        logs.add(node.getActivitySimpleName() +
                 " best successor is " + bestSuccessor.getActivitySimpleName() +
                 " with score " + bestSuccessorScore +
                 " containing the URLS " + bestSuccessorUrls);

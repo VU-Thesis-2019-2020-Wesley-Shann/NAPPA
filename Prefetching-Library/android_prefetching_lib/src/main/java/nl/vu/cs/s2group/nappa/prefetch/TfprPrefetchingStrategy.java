@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +40,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     private static final String LOG_TAG = TfprPrefetchingStrategy.class.getSimpleName();
 
     private int runCount = 0;
+    List<String> logs;
 
     public TfprPrefetchingStrategy() {
         super();
@@ -80,27 +82,35 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         runCount++;
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
         Log.d(LOG_TAG, "Node is " + node.getActivitySimpleName());
+        logs = new ArrayList<>();
+        List<String> selectedUrls;
+        List<ActivityNode> selectedNodes;
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
+        try {
+            // Prepare the graph
+            TfprGraph graph = makeSubgraph(node);
+            calculateVisitTimeScores(graph);
 
-        // Prepare the graph
-        TfprGraph graph = makeSubgraph(node);
-        calculateVisitTimeScores(graph);
+            // Verifies if we have any data in our subgraph.
+            if (graph.aggregateVisitTime == 0) {
+                logStrategyExecutionDuration(node, startTime);
+                return new ArrayList<>();
+            }
 
-        // Verifies if we have any data in our subgraph.
-        if (graph.aggregateVisitTime == 0) {
-            logStrategyExecutionDuration(node, startTime);
-            return new ArrayList<>();
+            // Run page rank
+            runTfprAlgorithm(graph);
+
+            // Select all successors nodes with score above the threshold
+            selectedNodes = getSuccessorListSortByTfprScore(graph, node);
+
+            // Select all URLs that fits the budget
+            selectedUrls = getUrls(node, selectedNodes);
+        } catch (Exception e) {
+            selectedUrls = new ArrayList<>();
+            selectedNodes = new ArrayList<>();
+            logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
         }
-
-        // Run page rank
-        runTfprAlgorithm(graph);
-
-        // Select all successors nodes with score above the threshold
-        List<ActivityNode> selectedNodes = getSuccessorListSortByTfprScore(graph, node);
-
-        // Select all URLs that fits the budget
-        List<String> selectedUrls = getUrls(node, selectedNodes);
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size());
@@ -122,7 +132,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             List<String> nodUrls = NappaUtil.getUrlsFromCandidateNode(currentNode, node, remainingUrlBudget);
             urls.addAll(nodUrls);
 
-            Log.d(LOG_TAG, "Selected node " + node.getActivitySimpleName() +
+            logs.add("Selected node " + node.getActivitySimpleName() +
                     " containing the URLS " + nodUrls);
             if (urls.size() >= maxNumberOfUrlToPrefetch) break;
         }
@@ -156,7 +166,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             }
         }
 
-        Log.d(LOG_TAG, "successors with high score = " + sortedSuccessorsAboveThreshold.toString());
+        logs.add("successors with high score = " + sortedSuccessorsAboveThreshold.toString());
 
         return sortedSuccessorsAboveThreshold;
     }
@@ -169,7 +179,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      */
     private void runTfprAlgorithm(TfprGraph graph) {
         for (int i = 0; i < numberOfIterations; i++) {
-            Log.d(LOG_TAG, "------------- TFPR calculation #" + (i + 1) + "/ " + (numberOfIterations) + " -----------");
+            logs.add("------------- TFPR calculation #" + (i + 1) + "/ " + (numberOfIterations) + " -----------");
             for (TfprNode node : graph.graph.values()) {
                 // This variable needs a better name
                 float sumBu = 0;
@@ -181,7 +191,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 }
 
                 node.tfprScore = dampingFactor * node.aggregateVisitTime / graph.aggregateVisitTime + (1 - dampingFactor) * sumBu;
-                Log.d(LOG_TAG, "node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
+                logs.add( "node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
             }
         }
     }
