@@ -162,11 +162,11 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
             Integer successorFrequency = successorsAggregateFrequencyMap.get(successor.activityName);
             if (successorFrequency == null) {
-                successorFrequency = 0;
                 logs.add("Something wrong might have occurred here");
-                logs.add("The successorFrequency was null");
+                logs.add("The successorFrequency was null for node" + successor.getActivitySimpleName());
+                throw new NoSuchElementException("Unable to obtain the successor frequency count!");
             }
-//                throw new NoSuchElementException("Unable to obtain the successor frequency count!");
+
             float successorTime = successor.getAggregateVisitTime().totalDuration;
 
             float successorTimeScore = totalAggregateTime == 0 ? 0 : (successorTime / totalAggregateTime * weightTimeScore);

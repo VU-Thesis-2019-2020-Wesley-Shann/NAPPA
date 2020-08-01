@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import nl.vu.cs.s2group.nappa.Nappa;
@@ -239,8 +240,13 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 float sumBu = 0;
 
                 for (TfprNode parent : node.parents) {
-                    //noinspection ConstantConditions The hash should never return null
-                    sumBu += parent.tfprScore * parent.aggregateVisitTimeFromSuccessors.get(node.node.activityName) /
+                    Long aggregateVisitTimeFromSuccessors = parent.aggregateVisitTimeFromSuccessors.get(node.node.activityName);
+                    if (aggregateVisitTimeFromSuccessors == null) {
+                        logs.add("Something wrong might have occurred here");
+                        logs.add("The successorFrequency was null for node" + parent.node.getActivitySimpleName());
+                        throw new NoSuchElementException("Unable to obtain the visit time from all successors from parent!");
+                    }
+                    sumBu += parent.tfprScore * aggregateVisitTimeFromSuccessors /
                             parent.totalAggregateVisitTimeFromSuccessors;
                 }
 
