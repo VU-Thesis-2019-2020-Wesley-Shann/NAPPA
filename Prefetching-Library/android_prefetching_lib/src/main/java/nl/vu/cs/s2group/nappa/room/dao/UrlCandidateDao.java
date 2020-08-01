@@ -89,8 +89,8 @@ public interface UrlCandidateDao {
 
                 /*try {*/
                     Log.d("PARAM", parameter.urlPiece);
-                    Log.d("PARAM", parameter.type+"");
-                    Log.d("PARAM", parameter.urlOrder+"");
+                    Log.d("PARAM", Integer.toString(parameter.type));
+                    Log.d("PARAM", Integer.toString(parameter.urlOrder));
                     parameteredUrl.addParameter(parameter.urlOrder,
                             ParameteredUrl.getTYPESFromId(parameter.type),
                             parameter.urlPiece);
