@@ -144,7 +144,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             wasSuccessful = false;
             selectedUrls = new ArrayList<>();
             selectedNodes = new ArrayList<>();
-            logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
+            logs.add("Something wrong happened: ");
+            logs.add("Exceptiom: " + e.toString());
+            logs.add(Arrays.toString(e.getStackTrace()).replace(',', '\n'));
         }
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();

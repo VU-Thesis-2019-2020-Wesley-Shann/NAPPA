@@ -94,7 +94,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             Nappa.strategyPredictionException++;
             urls = new ArrayList<>();
             wasSuccessful = false;
-            logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
+            logs.add("Something wrong happened: ");
+            logs.add("Exceptiom: " + e.toString());
+            logs.add(Arrays.toString(e.getStackTrace()).replace(',', '\n'));
         }
         long endTime = System.nanoTime();
 //        Log.d("MYTAG", startTime + ", " + endTime + ", " + (endTime - startTime));
