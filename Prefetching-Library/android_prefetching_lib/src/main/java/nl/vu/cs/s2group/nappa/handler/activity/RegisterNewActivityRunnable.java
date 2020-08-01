@@ -81,7 +81,7 @@ public class RegisterNewActivityRunnable implements Runnable {
                                 }
                             },
                             0,
-                            200,
+                            50,
                             TimeUnit.MILLISECONDS);
         }
         callback.accept(activity);
