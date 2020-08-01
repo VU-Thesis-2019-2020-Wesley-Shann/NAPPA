@@ -95,7 +95,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 
             // Verifies if we have any data in our subgraph.
             if (graph.aggregateVisitTime == 0) {
-                logStrategyExecutionDuration(node, startTime);
+//                logStrategyExecutionDuration(node, startTime);
+                long endTime = System.nanoTime();
+                MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, 0, node.successors.size(), 0, true);
                 return new ArrayList<>();
             }
 
