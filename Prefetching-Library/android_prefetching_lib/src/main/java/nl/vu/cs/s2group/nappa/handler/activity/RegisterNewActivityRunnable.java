@@ -52,6 +52,8 @@ public class RegisterNewActivityRunnable implements Runnable {
         activity.id = NappaDB.getInstance().activityDao().insert(activity);
         ActivityNode node = graph.getCurrent();
 
+        Log.d(LOG_TAG, "activity = " + activity.toString());
+        Log.d(LOG_TAG, "graph.getCurrent() = " + (graph.getCurrent() != null ? graph.getCurrent().toString() : null));
         /*
          * When using the app for the first time, the first activity accessed will trigger
          * this runnable to register it. However, due to the implementation design, the
