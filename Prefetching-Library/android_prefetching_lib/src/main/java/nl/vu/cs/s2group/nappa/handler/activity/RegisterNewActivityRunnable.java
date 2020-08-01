@@ -67,7 +67,9 @@ public class RegisterNewActivityRunnable implements Runnable {
             liveDataFetcherScheduler = new ScheduledThreadPoolExecutor(1)
                     .scheduleAtFixedRate(
                             () -> {
-                                if (graph.getCurrent() != null) {
+                                Log.d(LOG_TAG, "activity = " + activity.toString());
+                                Log.d(LOG_TAG, "graph.getCurrent() = " + graph.getCurrent().toString());
+                                if (graph.getCurrent() != null && graph.getCurrent().activityName.equals(activityName)) {
                                     FetchActivityLiveDataInfoHandler.run(graph.getCurrent(), strategy);
                                     liveDataFetcherScheduler.cancel(false);
                                     Log.d(LOG_TAG, "Current node is now available after " +
