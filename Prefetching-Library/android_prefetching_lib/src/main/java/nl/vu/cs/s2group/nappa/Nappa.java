@@ -254,7 +254,7 @@ public class Nappa {
 
     /* Thesis experimentation for getting Strategy accuracy - Start */
     static int metricStrategyAccuracyID = 0;
-    public static String predictedNextActivity = null;
+    public static List<String> predictedNextActivity = new ArrayList<>();
     static int strategyPredictionHits = 0;
     static int strategyPredictionMisses = 0;
     public static int strategyPredictionNoSuccessor = 0;
@@ -275,16 +275,16 @@ public class Nappa {
         Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - \n" +
                 "madePrediction = " + madePrediction + ", \n" +
                 "fromActivity = " + currentActivityName + ", \n" +
-                "predictedNextActivity = " + predictedNextActivity + ", \n" +
+                "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
         if (madePrediction) {
-            Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
-                    "checking prediction VS current activity");
-            if (predictedNextActivity != null) {
-                if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
+            if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
+                Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+                        "checking prediction VS current activity");
+                if (predictedNextActivity.contains(activity.getClass().getCanonicalName()))
                     strategyPredictionHits++;
                 else strategyPredictionMisses++;
-                predictedNextActivity = null;
+                predictedNextActivity = new ArrayList<>();
             }
             madePrediction = false;
             Nappa.metricStrategyAccuracyID++;

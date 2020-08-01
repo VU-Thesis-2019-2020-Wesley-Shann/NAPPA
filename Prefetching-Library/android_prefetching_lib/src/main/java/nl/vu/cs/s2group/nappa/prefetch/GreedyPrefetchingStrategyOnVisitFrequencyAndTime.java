@@ -39,7 +39,6 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
     private List<String> already_visited_successors;
 
-    String firstNextActivityPredicted = null;
     List<String> logs;
 
     private int runCount = 0;
@@ -72,7 +71,6 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
         recursionCount = 0;
-        firstNextActivityPredicted = null;
         logs = new ArrayList<>();
         Log.d(LOG_TAG, "==================================");
         Log.d(LOG_TAG, "Starting Run #" + runCount );
@@ -97,12 +95,11 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size(), wasSuccessful);
 //        logStrategyExecutionDuration(node, startTime);
-        Nappa.predictedNextActivity = firstNextActivityPredicted;
-        if (Nappa.predictedNextActivity == null && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+        if (Nappa.predictedNextActivity.size() == 0 && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
-        Log.d(LOG_TAG, "Next visited child will be " + firstNextActivityPredicted + "\n");
+        Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity.toString() + "\n");
         Log.d(LOG_TAG, "==================================");
 
         return urls;
@@ -195,9 +192,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                 logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
             return urlList;
         }
-
-        if (firstNextActivityPredicted == null)
-            firstNextActivityPredicted = bestSuccessor.activityName;
+        Nappa.predictedNextActivity.add(bestSuccessor.activityName);
 
         // Fetches the URLs from the bestSuccessor and the remaining URL budget
         int remainingUrlBudget = maxNumberOfUrlToPrefetch - urlList.size();

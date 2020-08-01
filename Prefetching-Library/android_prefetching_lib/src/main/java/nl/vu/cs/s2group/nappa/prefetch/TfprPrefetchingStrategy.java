@@ -131,7 +131,6 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
-        Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
         if (Nappa.predictedNextActivity == null && node.successors.size() > 0)
             Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
@@ -182,6 +181,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         for (TfprNode successor : sortedSuccessors) {
             if (successor.tfprScore >= scoreLowerThreshold) {
                 sortedSuccessorsAboveThreshold.add(successor.node);
+                Nappa.predictedNextActivity.add(successor.node.activityName);
             } else {
                 // Since the list is sorted, all subsequent nodes will have insufficient TFPR score
                 break;
