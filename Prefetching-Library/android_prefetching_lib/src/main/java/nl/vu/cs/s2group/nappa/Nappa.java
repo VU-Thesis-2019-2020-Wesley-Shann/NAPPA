@@ -276,14 +276,16 @@ public class Nappa {
                 "madePrediction = " + madePrediction + ", " +
                 "predictedNextActivity = " + predictedNextActivity + ", " +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", ");
-        if (madePrediction && predictedNextActivity != null) {
+        if (madePrediction) {
             Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
                     "checking prediction VS current activity");
-            if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
-                strategyPredictionHits++;
-            else strategyPredictionMisses++;
+            if (predictedNextActivity != null) {
+                if (predictedNextActivity.equals(activity.getClass().getCanonicalName()))
+                    strategyPredictionHits++;
+                else strategyPredictionMisses++;
+                predictedNextActivity = null;
+            }
             madePrediction = false;
-            predictedNextActivity = null;
             Nappa.metricStrategyAccuracyID++;
             MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID,
                     Nappa.strategyPredictionExecutionCount,
