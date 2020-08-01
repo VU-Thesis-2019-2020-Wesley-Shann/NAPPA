@@ -183,6 +183,11 @@ public class Nappa {
      * @param activityName The canonical class name of the activity to register
      */
     public static void registerActivity(String activityName) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (activityName == null) {
             Log.d(LOG_TAG, "registerActivity - attempt to register null activityName");
             Log.d(LOG_TAG, "registerActivity - trace - " + Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n'));
