@@ -897,9 +897,10 @@ public class Nappa {
                 return response;
 
             } catch (IOException exception) {
+                Log.d(LOG_TAG, "Interceptor exiting with exception " + exception.toString());
                 exception.printStackTrace();
             }
-
+            Log.d(LOG_TAG, response != null ? "Return intercepted response after exception" : "Returning new response after exception");
             return response != null ? response : chain.proceed(chain.request());
         }
     }
