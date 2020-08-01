@@ -178,7 +178,8 @@ public class ActivityGraph {
         if (nodeList.contains(node)) {
             return nodeList.get(nodeList.indexOf(node));
         }
-        throw new RuntimeException("Unable to find node: " + activityName);
+        return null;
+//        throw new RuntimeException("Unable to find node: " + activityName);
     }
 
     public void updateLAR(String activityName) {
