@@ -723,6 +723,7 @@ public class Nappa {
      * Represents an interceptor to be added to the OkHTTP chain of interceptors
      */
     private static class CustomInterceptor implements Interceptor {
+        private static final String LOG_TAG = CustomInterceptor.class.getSimpleName();
 
         public Response intercept(Interceptor.Chain chain) throws IOException {
             Request request = chain.request();
