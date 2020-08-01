@@ -184,11 +184,17 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 
         // filter out all nodes with low TFPR score
         List<ActivityNode> sortedSuccessorsAboveThreshold = new ArrayList<>();
+        int counter = 0;
         for (TfprNode successor : sortedSuccessors) {
             if (successor.tfprScore >= scoreLowerThreshold) {
+                counter++;
                 sortedSuccessorsAboveThreshold.add(successor.node);
                 Nappa.predictedNextActivity.add(successor.node.activityName);
             } else {
+                if (counter == 0) {
+                    logs.add("Successor with highest score is " + successor.node.getActivitySimpleName() + " with score " + successor.tfprScore);
+                    logs.add("The score threshold is " + scoreLowerThreshold);
+                }
                 // Since the list is sorted, all subsequent nodes will have insufficient TFPR score
                 break;
             }
