@@ -137,7 +137,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
-        if (Nappa.predictedNextActivity == null && node.successors.size() > 0)
+        if (Nappa.predictedNextActivity.size() == 0 && node.successors.size() > 0)
             Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
