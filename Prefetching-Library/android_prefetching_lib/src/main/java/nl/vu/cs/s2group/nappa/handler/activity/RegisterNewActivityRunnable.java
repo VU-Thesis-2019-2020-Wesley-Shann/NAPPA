@@ -68,7 +68,7 @@ public class RegisterNewActivityRunnable implements Runnable {
                     .scheduleAtFixedRate(
                             () -> {
                                 Log.d(LOG_TAG, "activity = " + activity.toString());
-                                Log.d(LOG_TAG, "graph.getCurrent() = " + graph.getCurrent().toString());
+                                Log.d(LOG_TAG, "graph.getCurrent() = " + (graph.getCurrent() != null ? graph.getCurrent().toString() : null));
                                 if (graph.getCurrent() != null && graph.getCurrent().activityName.equals(activityName)) {
                                     FetchActivityLiveDataInfoHandler.run(graph.getCurrent(), strategy);
                                     liveDataFetcherScheduler.cancel(false);
