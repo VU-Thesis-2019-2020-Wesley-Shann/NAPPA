@@ -294,6 +294,8 @@ public class Nappa {
             }
 
             poolExecutor.schedule(() -> {
+                Log.d(LOG_TAG, "Current node - currentActivityName - " + currentActivityName);
+                Log.d(LOG_TAG, "Current node - activityGraph.getCurrent() - " + (activityGraph.getCurrent() != null ? activityGraph.getCurrent().activityName : null));
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                 madePrediction = true;
                 for (String url : topNUrls) {

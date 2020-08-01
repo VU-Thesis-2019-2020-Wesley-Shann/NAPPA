@@ -64,7 +64,7 @@ public class RegisterNewActivityRunnable implements Runnable {
          * ensure that this scheduler will be isolated and encourage to refactor this in
          * the future.
          */
-        if (node != null) FetchActivityLiveDataInfoHandler.run(node, strategy);
+        if (node != null && node.activityName.equals(activityName) ) FetchActivityLiveDataInfoHandler.run(node, strategy);
         else {
             liveDataFetcherScheduler = new ScheduledThreadPoolExecutor(1)
                     .scheduleAtFixedRate(
