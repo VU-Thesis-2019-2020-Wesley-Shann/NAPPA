@@ -149,6 +149,7 @@ public class ActivityNode {
      */
     public void setAggregateVisitTimeLiveData(LiveData<AggregateVisitTimeByActivity> aggregateVisitTimeLiveData) {
         this.aggregateVisitTimeLiveData = aggregateVisitTimeLiveData;
+        Log.d(LOG_TAG, "Setting aggregate visit time live data for node " + getActivitySimpleName());
 
         this.aggregateVisitTimeLiveData.observeForever((newAggregateVisitTime) -> {
             if (newAggregateVisitTime == null || newAggregateVisitTime.activityName == null) {

@@ -1,5 +1,7 @@
 package nl.vu.cs.s2group.nappa.handler.activity;
 
+import android.util.Log;
+
 import org.jetbrains.annotations.NotNull;
 
 import nl.vu.cs.s2group.nappa.Nappa;
@@ -30,6 +32,7 @@ import nl.vu.cs.s2group.nappa.util.NappaThreadPool;
  * objects ensures consistency with the database.
  */
 public class FetchActivityLiveDataInfoHandler {
+    private static final String LOG_TAG = FetchActivityLiveDataInfoHandler.class.getSimpleName();
 
     public static void run(@NotNull ActivityNode activity, @NotNull PrefetchingStrategy strategy) {
         // Fetches configuration needed to fetch data in the DB
@@ -37,6 +40,13 @@ public class FetchActivityLiveDataInfoHandler {
         int lastNSessions = NappaConfigMap.get(
                 PrefetchingStrategyConfigKeys.LAST_N_SESSIONS,
                 AbstractPrefetchingStrategy.DEFAULT_LAST_N_SESSIONS);
+
+        Log.d(LOG_TAG, "activity  = " + activity.getActivitySimpleName());
+        Log.d(LOG_TAG, "shouldSetSessionAggregateLiveData  = " + activity.shouldSetSessionAggregateLiveData());
+        Log.d(LOG_TAG, "need/shouldSetSuccessorVisitTime  = " + strategy.needVisitTime() + " - " + activity.shouldSetAggregateVisitTime());
+        Log.d(LOG_TAG, "need/shouldSetSuccessorVisitTime  = " + strategy.needSuccessorsVisitTime() + " - " + activity.shouldSetSuccessorVisitTime());
+        Log.d(LOG_TAG, "shouldSetUrlCandidateDbLiveDataLiveData  = " + activity.shouldSetUrlCandidateDbLiveDataLiveData());
+        Log.d(LOG_TAG, "shouldSetActivityExtraLiveData  = " + activity.shouldSetActivityExtraLiveData());
 
         // Start invoking runnable classes responsible to fetch the data in the DB
         if (activity.shouldSetSessionAggregateLiveData())

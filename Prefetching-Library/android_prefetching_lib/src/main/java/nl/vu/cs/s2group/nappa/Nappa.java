@@ -181,8 +181,11 @@ public class Nappa {
      * @param activityName The canonical class name of the activity to register
      */
     public static void registerActivity(String activityName) {
-        if (activityMap.containsKey(activityName)) return;
-        Log.d(LOG_TAG, "registerActivity: " + activityName);
+        if (activityMap.containsKey(activityName)) {
+            Log.d(LOG_TAG, "registerActivity: (already in) " + activityName);
+            return;
+        }
+        Log.d(LOG_TAG, "registerActivity: (new) " + activityName);
 
         RegisterNewActivityHandler.run(activityName,
                 strategyIntent,
