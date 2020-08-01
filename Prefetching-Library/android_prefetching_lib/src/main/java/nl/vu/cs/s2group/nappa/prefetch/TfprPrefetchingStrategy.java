@@ -81,7 +81,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
         try {
-            TimeUnit.MILLISECONDS.sleep(250);
+            TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
