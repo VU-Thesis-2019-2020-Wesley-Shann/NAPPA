@@ -200,6 +200,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      *              calculated
      */
     private void runTfprAlgorithm(TfprGraph graph) {
+        logs.add("runTfprAlgorithm");
         for (int i = 0; i < numberOfIterations; i++) {
             logs.add("------------- TFPR calculation #" + (i + 1) + " of " + (numberOfIterations) + " -----------");
             for (TfprNode node : graph.graph.values()) {
