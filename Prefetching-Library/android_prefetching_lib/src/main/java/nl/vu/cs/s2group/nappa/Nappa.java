@@ -413,19 +413,6 @@ public class Nappa {
 
                 // Update the global extras map after all extras have been stored
                 extrasMap.put(idAct, extras);
-                extrasLogTagId++;
-                String extrasLogTag = "NappaIntentExtras";
-                Log.d(extrasLogTag, "==================");
-                Log.d(extrasLogTag, "Log #" + extrasLogTagId);
-                Log.d(extrasLogTag, "------------------");
-                for (Map.Entry<String, Long> entry : activityMap.entrySet()) {
-                    Map<String, String> map = extrasMap.get(entry.getValue());
-                    Log.d(extrasLogTag, "activity " + entry.getKey() + " - extras (#" + map.size() + "):");
-                    for (Map.Entry<String, String> extraEntry : map.entrySet()) {
-                        Log.d(extrasLogTag, "\t- " + extraEntry.getKey() + " : " + extraEntry.getValue());
-                    }
-                }
-                Log.d(extrasLogTag, "==================");
 
                 /*
                  Since this method is triggered right before navigating to another activity, and thus
@@ -463,6 +450,19 @@ public class Nappa {
                 }, 0, TimeUnit.SECONDS);
 
             }
+            extrasLogTagId++;
+            String extrasLogTag = "NappaIntentExtras";
+            Log.d(extrasLogTag, "==================");
+            Log.d(extrasLogTag, "Log #" + extrasLogTagId);
+            Log.d(extrasLogTag, "------------------");
+            for (Map.Entry<String, Long> entry : activityMap.entrySet()) {
+                Map<String, String> map = extrasMap.get(entry.getValue());
+                Log.d(extrasLogTag, "activity " + entry.getKey() + " - extras (#" + map.size() + "):");
+                for (Map.Entry<String, String> extraEntry : map.entrySet()) {
+                    Log.d(extrasLogTag, "\t- " + extraEntry.getKey() + " : " + extraEntry.getValue());
+                }
+            }
+            Log.d(extrasLogTag, "==================");
 
         }
 
