@@ -79,6 +79,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
+        Nappa.strategyPredictionExecutionCount++;
+        if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
         Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
         Log.d(LOG_TAG, "Node data " + node.toString());
@@ -97,6 +99,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             if (graph.aggregateVisitTime == 0) {
 //                logStrategyExecutionDuration(node, startTime);
                 long endTime = System.nanoTime();
+                if (node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
                 MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, 0, node.successors.size(), 0, true);
                 return new ArrayList<>();
             }
@@ -111,6 +114,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             selectedUrls = getUrls(node, selectedNodes);
             wasSuccessful = true;
         } catch (Exception e) {
+            Nappa.strategyPredictionException++;
             wasSuccessful = false;
             selectedUrls = new ArrayList<>();
             selectedNodes = new ArrayList<>();
@@ -120,6 +124,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
         Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
+        if (Nappa.predictedNextActivity == null && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
         Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
         Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
 

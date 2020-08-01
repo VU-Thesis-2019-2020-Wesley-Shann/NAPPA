@@ -257,6 +257,10 @@ public class Nappa {
     public static String predictedNextActivity = null;
     static int strategyPredictionHits = 0;
     static int strategyPredictionMisses = 0;
+    public static int strategyPredictionNoSuccessor = 0;
+    public static int strategyPredictionException = 0;
+    public static int strategyPredictionInsufficientScore = 0;
+    public static int strategyPredictionExecutionCount = 0;
     static boolean madePrediction = false;
 
     /* Thesis experimentation for getting Strategy accuracy - End */
@@ -281,7 +285,13 @@ public class Nappa {
             madePrediction = false;
             predictedNextActivity = null;
             Nappa.metricStrategyAccuracyID++;
-            MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID, Nappa.strategyPredictionHits, Nappa.strategyPredictionMisses);
+            MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID,
+                    Nappa.strategyPredictionExecutionCount,
+                    Nappa.strategyPredictionHits,
+                    Nappa.strategyPredictionMisses,
+                    Nappa.strategyPredictionNoSuccessor,
+                    Nappa.strategyPredictionInsufficientScore,
+                    Nappa.strategyPredictionException);
         }
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();

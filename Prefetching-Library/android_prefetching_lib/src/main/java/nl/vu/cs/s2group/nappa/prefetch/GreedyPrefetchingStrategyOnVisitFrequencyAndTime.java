@@ -68,6 +68,8 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
+        Nappa.strategyPredictionExecutionCount++;
+        if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
         recursionCount = 0;
         firstNextActivityPredicted = null;
@@ -83,6 +85,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
             wasSuccessful = true;
         } catch (Exception e) {
+            Nappa.strategyPredictionException++;
             urls = new ArrayList<>();
             wasSuccessful = false;
             logs.add("Something wrong happened: " + e.toString() + "\n" + Arrays.toString(e.getStackTrace()));
@@ -93,6 +96,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size(), wasSuccessful);
 //        logStrategyExecutionDuration(node, startTime);
         Nappa.predictedNextActivity = firstNextActivityPredicted;
+        if (Nappa.predictedNextActivity == null && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
