@@ -83,7 +83,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
         Log.d(LOG_TAG, "==================================");
-        Log.d(LOG_TAG, "Starting Run #" + runCount );
+        Log.d(LOG_TAG, "Starting Run #" + runCount);
         Log.d(LOG_TAG, "----------------------------------");
         Log.d(LOG_TAG, "Node data " + node.toString());
         logs = new ArrayList<>();
@@ -132,7 +132,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
         Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
-        if (Nappa.predictedNextActivity == null && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+        if (Nappa.predictedNextActivity == null && node.successors.size() > 0)
+            Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
@@ -212,7 +213,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 }
 
                 node.tfprScore = dampingFactor * node.aggregateVisitTime / graph.aggregateVisitTime + (1 - dampingFactor) * sumBu;
-                logs.add( "node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
+                logs.add("node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
             }
         }
     }
@@ -294,19 +295,25 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      * @param tfprGraph The subgraph to run the TFPR algorithm
      */
     private void calculateVisitTimeScores(@NotNull TfprGraph tfprGraph) {
+        logs.add("calculateVisitTimeScores");
         for (TfprNode tfprNode : tfprGraph.graph.values()) {
+            logs.add("-------- Node " + tfprNode.node.getActivitySimpleName() + "-----------");
             // Obtain t(u)
             tfprNode.aggregateVisitTime = tfprNode.node.getAggregateVisitTime().totalDuration;
+            logs.add("tfprNode.aggregateVisitTime = " + tfprNode.aggregateVisitTime);
 
             // Obtain partial SUM(t(w)) | w e G
             tfprGraph.aggregateVisitTime += tfprNode.aggregateVisitTime;
 
             // Obtain SUM(t(v, w)) | w e F_v
             tfprNode.totalAggregateVisitTimeFromSuccessors = NappaUtil.getSuccessorsAggregateVisitTimeOriginatedFromNode(tfprNode.node);
+            logs.add("tfprNode.totalAggregateVisitTimeFromSuccessors = " + tfprNode.totalAggregateVisitTimeFromSuccessors);
 
             // Obtain t(v, u) for all pairs of v -> u where v is the current node
             tfprNode.aggregateVisitTimeFromSuccessors = NappaUtil.getSuccessorsAggregateVisitTimeOriginatedFromNodeMap(tfprNode.node);
+            logs.add("tfprNode.aggregateVisitTimeFromSuccessors = " + tfprNode.aggregateVisitTimeFromSuccessors);
         }
+        logs.add("tfprGraph.aggregateVisitTimeFromSuccessors = " + tfprGraph.aggregateVisitTime);
 
     }
 
