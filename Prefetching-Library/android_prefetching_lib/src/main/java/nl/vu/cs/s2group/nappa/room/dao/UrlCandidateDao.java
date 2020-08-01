@@ -81,6 +81,7 @@ public interface UrlCandidateDao {
             for (UrlCandidateToUrlParameter parameter : parameterList) {
 
                 ParameteredUrl parameteredUrl = parameteredUrlHashMap.get(parameter.id);
+                if (parameter.urlPiece == null) continue;
                 if (parameteredUrl == null) {
                     parameteredUrl = new ParameteredUrl();
                     parameteredUrlHashMap.put(parameter.id, parameteredUrl);
