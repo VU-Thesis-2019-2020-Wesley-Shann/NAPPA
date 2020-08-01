@@ -28,8 +28,8 @@ public class NappaLifecycleObserver implements LifecycleObserver {
         Nappa.leavingCurrentActivity();
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    public void onDestroy() {
-        Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onDestroy");
-    }
+//    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+//    public void onDestroy() {
+//        Log.d(LOG_TAG, activity.getClass().getCanonicalName() + " - onDestroy");
+//    }
 }
