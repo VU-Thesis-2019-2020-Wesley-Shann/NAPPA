@@ -286,9 +286,13 @@ public class Nappa {
             if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
                         "checking prediction VS current activity");
-                if (predictedNextActivity.contains(activity.getClass().getCanonicalName()))
+                if (predictedNextActivity.contains(activity.getClass().getCanonicalName())) {
                     strategyPredictionHits++;
-                else strategyPredictionMisses++;
+                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
+                } else {
+                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a miss");
+                    strategyPredictionMisses++;
+                }
                 predictedNextActivity = new ArrayList<>();
             }
             madePrediction = false;
