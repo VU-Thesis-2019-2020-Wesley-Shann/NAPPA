@@ -101,6 +101,12 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 long endTime = System.nanoTime();
                 if (node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
                 MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, 0, node.successors.size(), 0, true);
+                for (String log : logs) {
+                    Log.d(LOG_TAG, log);
+                }
+                Log.d(LOG_TAG, "Node has no visit time data, which is a result from having zero successors or failing to fetching data from the DB");
+                Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
+                Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
                 return new ArrayList<>();
             }
 
