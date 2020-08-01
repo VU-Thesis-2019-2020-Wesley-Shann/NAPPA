@@ -125,6 +125,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
         Nappa.predictedNextActivity = !selectedNodes.isEmpty() ? selectedNodes.get(0).activityName : null;
         if (Nappa.predictedNextActivity == null && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+        for (String log : logs) {
+            Log.d(LOG_TAG, log);
+        }
         Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
         Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
 
