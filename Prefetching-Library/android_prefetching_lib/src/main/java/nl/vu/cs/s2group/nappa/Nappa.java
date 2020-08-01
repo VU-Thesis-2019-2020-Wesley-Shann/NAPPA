@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -182,6 +183,11 @@ public class Nappa {
      * @param activityName The canonical class name of the activity to register
      */
     public static void registerActivity(String activityName) {
+        if (activityName == null) {
+            Log.d(LOG_TAG, "registerActivity - attempt to register null activityName");
+            Log.d(LOG_TAG, "registerActivity - trace - " + Arrays.toString(Thread.currentThread().getStackTrace()).replace(',', '\n'));
+            return;
+        }
         if (activityMap.containsKey(activityName)) {
             Log.d(LOG_TAG, "registerActivity: (already in) " + activityName);
             return;
