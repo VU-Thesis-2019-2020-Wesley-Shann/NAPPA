@@ -1,12 +1,13 @@
 package nl.vu.cs.s2group.nappa.room.dao;
 
+import android.util.ArrayMap;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
-import android.util.ArrayMap;
-import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,10 +40,11 @@ public interface UrlCandidateDao {
     /**
      * Fetch for an activity "idAct" all url canditates, composed of URLS and also url pieces.  Will
      * return the results as an object {@linkplain UrlCandidateToUrlParameter}.
+     *
      * @param idAct The activity for which all urlCandidates and their corresponidng UrlCandidateParts
      *              will be fetchedf for
      * @return For and Activity A,  and its urlCandidates C,  where c element of C contains candidate parts P,
-     *         then return a list of all candidate parts P for all urlCandidates C
+     * then return a list of all candidate parts P for all urlCandidates C
      */
     @Query("SELECT puc.id, id_activity as idActivity, count, url_order as urlOrder, type, url_piece as urlPiece " +
             "from nappa_url_candidate as puc " +
@@ -66,7 +68,6 @@ public interface UrlCandidateDao {
          * Process all URL "Chunks" of type {@linkplain UrlCandidateToUrlParameter } stored in
          * {@code parameterList}, and an array of {@linkplain ParameteredUrl}s
          *
-         *
          * @param parameterList A list of URL parameters
          * @return A list of parametered URLS
          */
@@ -88,12 +89,12 @@ public interface UrlCandidateDao {
                 Log.d("PARAM", "ID_ACTIVITY: " + parameter.idActivity);
 
                 /*try {*/
-                    Log.d("PARAM", parameter.urlPiece);
-                    Log.d("PARAM", Integer.toString(parameter.type));
-                    Log.d("PARAM", Integer.toString(parameter.urlOrder));
-                    parameteredUrl.addParameter(parameter.urlOrder,
-                            ParameteredUrl.getTYPESFromId(parameter.type),
-                            parameter.urlPiece);
+                Log.d("PARAM", "parameter.urlPiece = " + parameter.urlPiece);
+                Log.d("PARAM", "parameter.type = " + parameter.type);
+                Log.d("PARAM", "parameter.urlOrder = " + parameter.urlOrder);
+                parameteredUrl.addParameter(parameter.urlOrder,
+                        ParameteredUrl.getTYPESFromId(parameter.type),
+                        parameter.urlPiece);
             }
             // Return an Iterable list of all the values stored in the hashmap
             return new LinkedList<>(parameteredUrlHashMap.values());
