@@ -82,7 +82,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         Nappa.strategyPredictionExecutionCount++;
         if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
-        Log.d(LOG_TAG, "-------------Starting Run #" + runCount + " -----------");
+        Log.d(LOG_TAG, "==================================");
+        Log.d(LOG_TAG, "Starting Run #" + runCount );
+        Log.d(LOG_TAG, "----------------------------------");
         Log.d(LOG_TAG, "Node data " + node.toString());
         logs = new ArrayList<>();
         List<String> selectedUrls;
@@ -106,7 +108,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 }
                 Log.d(LOG_TAG, "Node has no visit time data, which is a result from having zero successors or failing to fetching data from the DB");
                 Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
-                Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
+                Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
 
@@ -135,7 +137,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             Log.d(LOG_TAG, log);
         }
         Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
-        Log.d(LOG_TAG, "-------------Finished Run #" + runCount + " -----------");
+        Log.d(LOG_TAG, "==================================");
 
 //        logStrategyExecutionDuration(node, startTime);
 
