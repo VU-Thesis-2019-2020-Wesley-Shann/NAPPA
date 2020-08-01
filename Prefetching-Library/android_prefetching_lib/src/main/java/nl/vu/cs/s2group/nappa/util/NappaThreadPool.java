@@ -2,6 +2,7 @@ package nl.vu.cs.s2group.nappa.util;
 
 import android.util.Log;
 
+import java.util.Arrays;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,9 @@ public final class NappaThreadPool {
         try {
             future.get();
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Exception caught on worker thread", e);
+            Log.e(LOG_TAG, "Exception caught on worker thread");
+            Log.e(LOG_TAG, "Exceptiom: " + e.toString());
+            Log.e(LOG_TAG, Arrays.toString(e.getStackTrace()).replace(',', '\n'));
         }
     }
 
