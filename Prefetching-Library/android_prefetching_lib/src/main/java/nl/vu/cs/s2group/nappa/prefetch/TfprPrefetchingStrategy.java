@@ -244,7 +244,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                     if (aggregateVisitTimeFromSuccessors == null) {
                         logs.add("Something wrong might have occurred here");
                         logs.add("The successorFrequency was null for node" + parent.node.getActivitySimpleName());
-                        throw new NoSuchElementException("Unable to obtain the visit time from all successors from parent!");
+                        throw new NoSuchElementException("Unable to obtain the visit time from all successors from parent " + parent.node.getActivitySimpleName());
                     }
                     sumBu += parent.tfprScore * aggregateVisitTimeFromSuccessors /
                             parent.totalAggregateVisitTimeFromSuccessors;
