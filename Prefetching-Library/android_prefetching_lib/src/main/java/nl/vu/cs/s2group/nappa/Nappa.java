@@ -896,7 +896,7 @@ public class Nappa {
 
                 return response;
 
-            } catch (IOException exception) {
+            } catch (Exception exception) {
                 Log.d(LOG_TAG, "Interceptor exiting with exception " + exception.toString());
                 exception.printStackTrace();
             }
