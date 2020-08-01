@@ -200,6 +200,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      *              calculated
      */
     private void runTfprAlgorithm(TfprGraph graph) {
+        logs.add("===");
         logs.add("runTfprAlgorithm");
         for (int i = 0; i < numberOfIterations; i++) {
             logs.add("------------- TFPR calculation #" + (i + 1) + " of " + (numberOfIterations) + " -----------");
@@ -217,6 +218,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                 logs.add("node " + node.node.getActivitySimpleName() + " score = " + node.tfprScore);
             }
         }
+        logs.add("===");
     }
 
     /**
@@ -296,6 +298,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      * @param tfprGraph The subgraph to run the TFPR algorithm
      */
     private void calculateVisitTimeScores(@NotNull TfprGraph tfprGraph) {
+        logs.add("===");
         logs.add("calculateVisitTimeScores");
         for (TfprNode tfprNode : tfprGraph.graph.values()) {
             logs.add("-------- Node " + tfprNode.node.getActivitySimpleName() + "-----------");
@@ -314,7 +317,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             tfprNode.aggregateVisitTimeFromSuccessors = NappaUtil.getSuccessorsAggregateVisitTimeOriginatedFromNodeMap(tfprNode.node);
             logs.add("tfprNode.aggregateVisitTimeFromSuccessors = " + tfprNode.aggregateVisitTimeFromSuccessors);
         }
+        logs.add("-------- Graph -----------");
         logs.add("tfprGraph.aggregateVisitTimeFromSuccessors = " + tfprGraph.aggregateVisitTime);
+        logs.add("===");
 
     }
 
