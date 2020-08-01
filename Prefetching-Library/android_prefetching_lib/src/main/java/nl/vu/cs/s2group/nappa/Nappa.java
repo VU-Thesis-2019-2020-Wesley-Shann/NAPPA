@@ -458,8 +458,12 @@ public class Nappa {
             for (Map.Entry<String, Long> entry : activityMap.entrySet()) {
                 Map<String, String> map = extrasMap.get(entry.getValue());
                 Log.d(extrasLogTag, "activity " + entry.getKey() + " - extras (#" + map.size() + "):");
-                for (Map.Entry<String, String> extraEntry : map.entrySet()) {
-                    Log.d(extrasLogTag, "\t- " + extraEntry.getKey() + " : " + extraEntry.getValue());
+                if (map.size() > 0) {
+                    for (Map.Entry<String, String> extraEntry : map.entrySet()) {
+                        Log.d(extrasLogTag, "\t- " + extraEntry.getKey() + " : " + extraEntry.getValue());
+                    }
+                } else {
+                    Log.d(extrasLogTag, "\t- No extras registered");
                 }
             }
             Log.d(extrasLogTag, "==================");
