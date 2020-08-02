@@ -269,6 +269,7 @@ public class Nappa {
     static boolean madePrediction = false;
 
     private static void logStrategyAccuracy(String navigatedToActivity) {
+        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - madePrediction is" + madePrediction);
         if (madePrediction) {
             Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - start");
             if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
