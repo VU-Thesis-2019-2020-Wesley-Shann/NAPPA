@@ -207,7 +207,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         // sort nodes from the highest TFPR score to the lowest
         //noinspection ConstantConditions We do not add null values to the map
         List<TfprNode> sortedSuccessors = graph.graph.get(currentNode.activityName).successors;
-        Collections.sort(sortedSuccessors, (node1, node2) -> (int) (node2.tfprScore - node1.tfprScore));
+        logs.add("Successors before the sort " + sortedSuccessors.toString());
+        Collections.sort(sortedSuccessors, (node1, node2) -> (int) (node1.tfprScore - node2.tfprScore));
 
         logs.add("Successors sorted by score are " + sortedSuccessors.toString());
         // filter out all nodes with low TFPR score
