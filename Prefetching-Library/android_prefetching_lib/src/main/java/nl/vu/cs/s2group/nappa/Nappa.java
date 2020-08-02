@@ -489,7 +489,7 @@ public class Nappa {
                 if (map == null) {
                     Log.d(extrasLogTag, "\t- No extras registered");
                 } else if (map.size() > 0) {
-                    Log.d(extrasLogTag, "\t- " + map.size() + "extras registered");
+                    Log.d(extrasLogTag, "\t- " + map.size() + " extras registered");
                     for (Map.Entry<String, String> extraEntry : map.entrySet()) {
                         Log.d(extrasLogTag, "\t- " + extraEntry.getKey() + " : " + extraEntry.getValue());
                     }
