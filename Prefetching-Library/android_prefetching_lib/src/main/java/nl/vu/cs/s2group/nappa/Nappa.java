@@ -268,26 +268,12 @@ public class Nappa {
     public static int strategyPredictionExecutionCount = 0;
     static boolean madePrediction = false;
 
-    /* Thesis experimentation for getting Strategy accuracy - End */
-
-    /**
-     * Notifies the prefetching library whenever an activity transition takes place
-     *
-     * @param activity Represents the activity the user navigated to.
-     */
-    public static void setCurrentActivity(@NonNull Activity activity) {
-        boolean shouldPrefetch;
-        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - \n" +
-                "madePrediction = " + madePrediction + ", \n" +
-                "fromActivity = " + currentActivityName + ", \n" +
-                "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
-                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
-        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity");
+    private static void logStrategyAccuracy(String navigatedToActivity) {
         if (madePrediction) {
             if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
                         "checking prediction VS current activity");
-                if (predictedNextActivity.contains(activity.getClass().getCanonicalName())) {
+                if (predictedNextActivity.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
                     Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
                 } else {
@@ -306,6 +292,26 @@ public class Nappa {
                     Nappa.strategyPredictionInsufficientScore,
                     Nappa.strategyPredictionException);
         }
+    }
+
+    /* Thesis experimentation for getting Strategy accuracy - End */
+
+    /**
+     * Notifies the prefetching library whenever an activity transition takes place
+     *
+     * @param activity Represents the activity the user navigated to.
+     */
+    public static void setCurrentActivity(@NonNull Activity activity) {
+        boolean shouldPrefetch;
+        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - \n" +
+                "madePrediction = " + madePrediction + ", \n" +
+                "fromActivity = " + currentActivityName + ", \n" +
+                "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
+                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
+        poolExecutor.schedule(()->{
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity");
+            logStrategyAccuracy(activity.getClass().getCanonicalName());
+        }, 150, TimeUnit.MILLISECONDS);
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();
         //SHOULD PREFETCH IFF THE USER IS MOVING FORWARD
@@ -334,7 +340,7 @@ public class Nappa {
                 if (prefetchEnabled) {
                     prefetchUrls(topNUrls);
                 }
-            }, 0, TimeUnit.SECONDS);
+            }, 300, TimeUnit.MILLISECONDS);
         }
         Log.d(LOG_TAG, "STATS " + "Number of requests not prefetched: " + requestNP);
         Log.d(LOG_TAG, "STATS " + "Number of requests prefetched: " + requestP);
@@ -447,6 +453,7 @@ public class Nappa {
                 poolExecutor.schedule(() -> {
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - start");
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
+                    madePrediction = true;
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - end");
                     for (String url : toBePrefetched) {
                         Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);
@@ -714,7 +721,8 @@ public class Nappa {
         int falseNegative = Nappa.list_url_fn.size();
         int falsePositive = 0;
         for (String prefetchedUrls : Nappa.list_url_prefetched) {
-            if (!(Nappa.list_url_intercepted.contains(prefetchedUrls) && Nappa.list_url_tp.contains(prefetchedUrls))) falsePositive++;
+            if (!(Nappa.list_url_intercepted.contains(prefetchedUrls) && Nappa.list_url_tp.contains(prefetchedUrls)))
+                falsePositive++;
         }
         MetricPrefetchingAccuracy.log(Nappa.metricPrefetchingAccuracyID, truePositive, falsePositive, falseNegative);
     }

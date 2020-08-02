@@ -81,11 +81,11 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NotNull ActivityNode node, Integer maxNumber) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(350);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            TimeUnit.MILLISECONDS.sleep(150);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         Nappa.strategyPredictionExecutionCount++;
         runCount++;
         Log.d(LOG_TAG, "==================================");

@@ -68,11 +68,11 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
     @NonNull
     @Override
     public List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, Integer maxNumber) {
-        try {
-            TimeUnit.MILLISECONDS.sleep(350);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            TimeUnit.MILLISECONDS.sleep(150);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         Nappa.strategyPredictionExecutionCount++;
         if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
         runCount++;
