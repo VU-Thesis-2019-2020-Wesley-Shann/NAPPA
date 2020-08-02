@@ -541,7 +541,7 @@ public class Nappa {
     private static void prefetchUrls(List<String> requests) {
         libGet = true;
         for (String request : requests) {
-            add_prefetched_url(request);
+//            add_prefetched_url(request);
             try {
                 Request request1 = new Request.Builder().url(request).build();
                 okHttpClient.newCall(request1).execute();
