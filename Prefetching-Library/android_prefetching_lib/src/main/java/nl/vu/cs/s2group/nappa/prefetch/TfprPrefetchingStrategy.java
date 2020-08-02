@@ -108,7 +108,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                     Log.d(LOG_TAG, log);
                 }
                 Log.d(LOG_TAG, "Node has no successor");
-                Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
+                Log.d(LOG_TAG, "Next visited child will be " +(Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
                 Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
@@ -126,7 +126,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                     Log.d(LOG_TAG, log);
                 }
                 Log.d(LOG_TAG, "Node has no visit time data, which is the first run/activity or a result from failing to fetching data from the DB");
-                Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
+                Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
                 Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
@@ -152,12 +152,16 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         long endTime = System.nanoTime();
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
-        if (Nappa.predictedNextActivity.size() == 0 && node.successors.size() > 0)
-            Nappa.strategyPredictionInsufficientScore++;
+        if (
+                (
+                        (Nappa.runningPredictionFromActivity && Nappa.predictedNextActivityFromActivity.size() == 0) ||
+                                (Nappa.runningPredictionFromExtra && Nappa.predictedNextActivityFromExtra.size() == 0)
+                )
+                        && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
-        Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity + "\n");
+        Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
         Log.d(LOG_TAG, "==================================");
 
 //        logStrategyExecutionDuration(node, startTime);
@@ -207,7 +211,9 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             if (successor.tfprScore >= scoreLowerThreshold) {
                 counter++;
                 sortedSuccessorsAboveThreshold.add(successor.node);
-                Nappa.predictedNextActivity.add(successor.node.activityName);
+                if (Nappa.runningPredictionFromActivity)
+                    Nappa.predictedNextActivityFromActivity.add(successor.node.activityName);
+                else Nappa.predictedNextActivityFromExtra.add(successor.node.activityName);
             } else {
                 if (counter == 0) {
                     logs.add("Successor with highest score is " + successor.node.getActivitySimpleName() + " with score " + successor.tfprScore);

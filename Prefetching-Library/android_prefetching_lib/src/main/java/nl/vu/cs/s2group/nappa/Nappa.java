@@ -259,32 +259,36 @@ public class Nappa {
 
     /* Thesis experimentation for getting Strategy accuracy - Start */
     static int metricStrategyAccuracyID = 0;
-    public static List<String> predictedNextActivity = new ArrayList<>();
+    public static List<String> predictedNextActivityFromActivity = new ArrayList<>();
+    public static List<String> predictedNextActivityFromExtra = new ArrayList<>();
     static int strategyPredictionHits = 0;
     static int strategyPredictionMisses = 0;
     public static int strategyPredictionNoSuccessor = 0;
     public static int strategyPredictionException = 0;
     public static int strategyPredictionInsufficientScore = 0;
     public static int strategyPredictionExecutionCount = 0;
-    static boolean madePrediction = false;
+    static boolean madePredictionFromActivity = false;
+    static boolean madePredictionFromExtra = false;
+    public static boolean runningPredictionFromExtra = false;
+    public static boolean runningPredictionFromActivity = false;
 
-    private static void logStrategyAccuracy(String navigatedToActivity) {
-        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - madePrediction is" + madePrediction);
-        if (madePrediction) {
-            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - start");
-            if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
+    private static void logStrategyAccuracyFromActivity(String navigatedToActivity) {
+        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from activity - made prediction is" + madePredictionFromActivity);
+        if (madePredictionFromActivity) {
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from activity - start");
+            if (predictedNextActivityFromActivity != null && predictedNextActivityFromActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
                         "checking prediction VS current activity");
-                if (predictedNextActivity.contains(navigatedToActivity)) {
+                if (predictedNextActivityFromActivity.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
                     Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
                 } else {
                     Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a miss");
                     strategyPredictionMisses++;
                 }
-                predictedNextActivity = new ArrayList<>();
+                predictedNextActivityFromActivity = new ArrayList<>();
             }
-            madePrediction = false;
+            madePredictionFromActivity = false;
             Nappa.metricStrategyAccuracyID++;
             MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID,
                     Nappa.strategyPredictionExecutionCount,
@@ -293,7 +297,36 @@ public class Nappa {
                     Nappa.strategyPredictionNoSuccessor,
                     Nappa.strategyPredictionInsufficientScore,
                     Nappa.strategyPredictionException);
-            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - finished");
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from activity- finished");
+        }
+    }
+
+    private static void logStrategyAccuracyFromExtra(String navigatedToActivity) {
+        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from extra - made prediction is" + madePredictionFromExtra);
+        if (madePredictionFromExtra) {
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from extra - start");
+            if (predictedNextActivityFromExtra != null && predictedNextActivityFromExtra.size() > 0) {
+                Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
+                        "checking prediction VS current activity");
+                if (predictedNextActivityFromExtra.contains(navigatedToActivity)) {
+                    strategyPredictionHits++;
+                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
+                } else {
+                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a miss");
+                    strategyPredictionMisses++;
+                }
+                predictedNextActivityFromExtra = new ArrayList<>();
+            }
+            madePredictionFromExtra = false;
+            Nappa.metricStrategyAccuracyID++;
+            MetricStrategyAccuracy.log(Nappa.metricStrategyAccuracyID,
+                    Nappa.strategyPredictionExecutionCount,
+                    Nappa.strategyPredictionHits,
+                    Nappa.strategyPredictionMisses,
+                    Nappa.strategyPredictionNoSuccessor,
+                    Nappa.strategyPredictionInsufficientScore,
+                    Nappa.strategyPredictionException);
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from extra- finished");
         }
     }
 
@@ -307,12 +340,20 @@ public class Nappa {
     public static void setCurrentActivity(@NonNull Activity activity) {
         boolean shouldPrefetch;
         Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - \n" +
-                "madePrediction = " + madePrediction + ", \n" +
+                "madePredictionFromActivity = " + madePredictionFromActivity + ", \n" +
                 "fromActivity = " + currentActivityName + ", \n" +
-                "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
+                "predictedNextActivityFromActivity = " + predictedNextActivityFromActivity.toString() + ", \n" +
+                "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
+        Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - \n" +
+                "madePredictionFromExtra = " + madePredictionFromExtra + ", \n" +
+                "fromActivity = " + currentActivityName + ", \n" +
+                "predictedNextActivityFromExtra = " + predictedNextActivityFromExtra.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
         poolExecutor.schedule(()->{
-            logStrategyAccuracy(activity.getClass().getCanonicalName());
+            logStrategyAccuracyFromActivity(activity.getClass().getCanonicalName());
+        }, 400, TimeUnit.MILLISECONDS);
+        poolExecutor.schedule(()->{
+            logStrategyAccuracyFromExtra(activity.getClass().getCanonicalName());
         }, 400, TimeUnit.MILLISECONDS);
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();
@@ -335,9 +376,10 @@ public class Nappa {
                 Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - starting new prediction");
                 Log.d(LOG_TAG, "Current node - currentActivityName - " + currentActivityName);
                 Log.d(LOG_TAG, "Current node - activityGraph.getCurrent() - " + (activityGraph.getCurrent() != null ? activityGraph.getCurrent().activityName : null));
+                runningPredictionFromActivity = true;
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                 Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - finished new prediction");
-                madePrediction = true;
+                madePredictionFromActivity = true;
                 for (String url : topNUrls) {
                     Log.d(LOG_TAG, "TO_BE_PREF " + url);
                 }
@@ -456,8 +498,9 @@ public class Nappa {
                 // Begin Generating URL Candidates
                 poolExecutor.schedule(() -> {
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- start");
+                    runningPredictionFromExtra = true;
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
-                    madePrediction = true;
+                    madePredictionFromExtra = true;
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- end");
                     for (String url : toBePrefetched) {
                         Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);

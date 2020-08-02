@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 
 import nl.vu.cs.s2group.nappa.Nappa;
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
@@ -79,7 +78,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         recursionCount = 0;
         logs = new ArrayList<>();
         Log.d(LOG_TAG, "==================================");
-        Log.d(LOG_TAG, "Starting Run #" + runCount );
+        Log.d(LOG_TAG, "Starting Run #" + runCount);
         Log.d(LOG_TAG, "----------------------------------");
         Log.d(LOG_TAG, "Node data " + node.toString());
         boolean wasSuccessful;
@@ -103,11 +102,16 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        long endTime = System.currentTimeMillis();
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, urls.size(), node.successors.size(), already_visited_successors.size(), wasSuccessful);
 //        logStrategyExecutionDuration(node, startTime);
-        if (Nappa.predictedNextActivity.size() == 0 && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+        if (
+                (
+                        (Nappa.runningPredictionFromActivity && Nappa.predictedNextActivityFromActivity.size() == 0) ||
+                                (Nappa.runningPredictionFromExtra && Nappa.predictedNextActivityFromExtra.size() == 0)
+                )
+                        && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
-        Log.d(LOG_TAG, "Next visited child will be " + Nappa.predictedNextActivity.toString() + "\n");
+        Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
         Log.d(LOG_TAG, "==================================");
 
         return urls;
@@ -203,7 +207,9 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                 logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
             return urlList;
         }
-        Nappa.predictedNextActivity.add(bestSuccessor.activityName);
+        if (Nappa.runningPredictionFromActivity)
+            Nappa.predictedNextActivityFromActivity.add(bestSuccessor.activityName);
+        else Nappa.predictedNextActivityFromExtra.add(bestSuccessor.activityName);
 
         // Fetches the URLs from the bestSuccessor and the remaining URL budget
         int remainingUrlBudget = maxNumberOfUrlToPrefetch - urlList.size();
