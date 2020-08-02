@@ -65,7 +65,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
           The value is only overridden if it was not already overridden using the user-defined
           configurations.
          */
-        if (scoreLowerThreshold == DEFAULT_SCORE_LOWER_THRESHOLD) scoreLowerThreshold = 0.4f;
+        if (scoreLowerThreshold == DEFAULT_SCORE_LOWER_THRESHOLD) scoreLowerThreshold = 0.3f;
     }
 
     @Override
