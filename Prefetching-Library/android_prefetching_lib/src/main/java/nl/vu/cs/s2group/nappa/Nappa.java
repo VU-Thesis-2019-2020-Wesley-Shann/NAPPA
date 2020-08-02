@@ -271,6 +271,7 @@ public class Nappa {
     static boolean madePredictionFromExtra = false;
     public static boolean runningPredictionFromExtra = false;
     public static boolean runningPredictionFromActivity = false;
+    public static boolean isLastIssuedRunFromAct = false;
 
     private static void logStrategyAccuracyFromActivity(String navigatedToActivity) {
         Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from activity - made prediction is" + madePredictionFromActivity);
@@ -349,9 +350,9 @@ public class Nappa {
                 "fromActivity = " + currentActivityName + ", \n" +
                 "predictedNextActivityFromExtra = " + predictedNextActivityFromExtra.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
-        poolExecutor.schedule(()->{
+//        poolExecutor.schedule(()->{
             logStrategyAccuracyFromActivity(activity.getClass().getCanonicalName());
-        }, 400, TimeUnit.MILLISECONDS);
+//        }, 50, TimeUnit.MILLISECONDS);
         poolExecutor.schedule(()->{
             logStrategyAccuracyFromExtra(activity.getClass().getCanonicalName());
         }, 400, TimeUnit.MILLISECONDS);
@@ -377,6 +378,7 @@ public class Nappa {
                 Log.d(LOG_TAG, "Current node - currentActivityName - " + currentActivityName);
                 Log.d(LOG_TAG, "Current node - activityGraph.getCurrent() - " + (activityGraph.getCurrent() != null ? activityGraph.getCurrent().activityName : null));
                 runningPredictionFromActivity = true;
+                isLastIssuedRunFromAct = true;
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                 Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - finished new prediction");
                 madePredictionFromActivity = true;
@@ -499,6 +501,7 @@ public class Nappa {
                 poolExecutor.schedule(() -> {
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- start");
                     runningPredictionFromExtra = true;
+                    isLastIssuedRunFromAct = false;
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                     madePredictionFromExtra = true;
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- end");

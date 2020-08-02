@@ -73,7 +73,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //            e.printStackTrace();
 //        }
 
-        boolean addToAct = Nappa.runningPredictionFromActivity;
+        boolean addToAct = Nappa.isLastIssuedRunFromAct;
         logs = new ArrayList<>();
         Nappa.strategyPredictionExecutionCount++;
 //        runCount++;
