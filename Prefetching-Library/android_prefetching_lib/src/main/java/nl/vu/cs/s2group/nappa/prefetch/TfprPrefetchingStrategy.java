@@ -86,13 +86,14 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+        boolean addToAct = Nappa.isLastIssuedRunFromAct;
         Nappa.strategyPredictionExecutionCount++;
-        runCount++;
-        Log.d(LOG_TAG, "==================================");
-        Log.d(LOG_TAG, "Starting Run #" + runCount);
-        Log.d(LOG_TAG, "----------------------------------");
-        Log.d(LOG_TAG, "Node data " + node.toString());
         logs = new ArrayList<>();
+        logs.add("==================================");
+        logs.add("Starting Run #" + Nappa.strategyPredictionExecutionCount);
+        logs.add("----------------------------------");
+        logs.add("Node data " + node.toString());
+        logs.add("MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + addToAct + "; extra = " + !addToAct);
         List<String> selectedUrls;
         List<ActivityNode> selectedNodes;
         boolean wasSuccessful;
@@ -103,12 +104,13 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             if (node.successors.size() == 0) {
                 long endTime = System.nanoTime();
                 Nappa.strategyPredictionNoSuccessor++;
+                logs.add("MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + addToAct + "; extra = " + !addToAct);
                 MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, 0, node.successors.size(), 0, true);
                 for (String log : logs) {
                     Log.d(LOG_TAG, log);
                 }
                 Log.d(LOG_TAG, "Node has no successor");
-                Log.d(LOG_TAG, "Next visited child will be " +(Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
+                Log.d(LOG_TAG, "Next visited child will be " +(addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
                 Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
@@ -126,7 +128,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                     Log.d(LOG_TAG, log);
                 }
                 Log.d(LOG_TAG, "Node has no visit time data, which is the first run/activity or a result from failing to fetching data from the DB");
-                Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
+                Log.d(LOG_TAG, "Next visited child will be " + (addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
                 Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
@@ -135,7 +137,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             runTfprAlgorithm(graph);
 
             // Select all successors nodes with score above the threshold
-            selectedNodes = getSuccessorListSortByTfprScore(graph, node);
+            selectedNodes = getSuccessorListSortByTfprScore(graph, node, addToAct);
 
             // Select all URLs that fits the budget
             selectedUrls = getUrls(node, selectedNodes);
@@ -145,6 +147,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             wasSuccessful = false;
             selectedUrls = new ArrayList<>();
             selectedNodes = new ArrayList<>();
+            logs.add("MetricStrategyAccuracy inc exception count" + Nappa.strategyPredictionException + " | act = " + addToAct + "; extra = " + !addToAct);
             logs.add("Something wrong happened: ");
             logs.add("Exceptiom: " + e.toString());
             logs.add(Arrays.toString(e.getStackTrace()).replace(',', '\n'));
@@ -154,14 +157,17 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         MetricNappaPrefetchingStrategyExecutionTime.log(LOG_TAG, startTime, endTime, selectedUrls.size(), node.successors.size(), selectedNodes.size(), wasSuccessful);
         if (
                 (
-                        (Nappa.runningPredictionFromActivity && Nappa.predictedNextActivityFromActivity.size() == 0) ||
-                                (Nappa.runningPredictionFromExtra && Nappa.predictedNextActivityFromExtra.size() == 0)
+                        (addToAct && Nappa.predictedNextActivityFromActivity.size() == 0) ||
+                                (!addToAct && Nappa.predictedNextActivityFromExtra.size() == 0)
                 )
-                        && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+                        && node.successors.size() > 0) {
+            Nappa.strategyPredictionInsufficientScore++;
+            logs.add("MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + addToAct + "; extra = " + !addToAct);
+        }
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
-        Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
+        Log.d(LOG_TAG, "Next visited child will be " + (addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
         Log.d(LOG_TAG, "==================================");
 
 //        logStrategyExecutionDuration(node, startTime);
@@ -195,7 +201,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
      * @return An array of successors sorted by TFPR score
      */
     @NotNull
-    private List<ActivityNode> getSuccessorListSortByTfprScore(@NotNull TfprGraph graph, @NotNull ActivityNode currentNode) {
+    private List<ActivityNode> getSuccessorListSortByTfprScore(@NotNull TfprGraph graph, @NotNull ActivityNode currentNode, boolean addToAct) {
         logs.add("===");
         logs.add("getSuccessorListSortByTfprScore");
         // sort nodes from the highest TFPR score to the lowest
@@ -211,7 +217,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             if (successor.tfprScore >= scoreLowerThreshold) {
                 counter++;
                 sortedSuccessorsAboveThreshold.add(successor.node);
-                if (Nappa.runningPredictionFromActivity)
+                if (addToAct)
                     Nappa.predictedNextActivityFromActivity.add(successor.node.activityName);
                 else Nappa.predictedNextActivityFromExtra.add(successor.node.activityName);
             } else {

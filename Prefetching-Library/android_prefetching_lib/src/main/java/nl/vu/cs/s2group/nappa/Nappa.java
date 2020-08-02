@@ -269,8 +269,8 @@ public class Nappa {
     public static int strategyPredictionExecutionCount = 0;
     static boolean madePredictionFromActivity = false;
     static boolean madePredictionFromExtra = false;
-    public static boolean runningPredictionFromExtra = false;
-    public static boolean runningPredictionFromActivity = false;
+//    public static boolean runningPredictionFromExtra = false;
+//    public static boolean runningPredictionFromActivity = false;
     public static boolean isLastIssuedRunFromAct = false;
 
     private static void logStrategyAccuracyFromActivity(String navigatedToActivity) {
@@ -377,7 +377,7 @@ public class Nappa {
                 Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - starting new prediction");
                 Log.d(LOG_TAG, "Current node - currentActivityName - " + currentActivityName);
                 Log.d(LOG_TAG, "Current node - activityGraph.getCurrent() - " + (activityGraph.getCurrent() != null ? activityGraph.getCurrent().activityName : null));
-                runningPredictionFromActivity = true;
+//                runningPredictionFromActivity = true;
                 isLastIssuedRunFromAct = true;
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                 Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - finished new prediction");
@@ -500,7 +500,7 @@ public class Nappa {
                 // Begin Generating URL Candidates
                 poolExecutor.schedule(() -> {
                     Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- start");
-                    runningPredictionFromExtra = true;
+//                    runningPredictionFromExtra = true;
                     isLastIssuedRunFromAct = false;
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                     madePredictionFromExtra = true;
