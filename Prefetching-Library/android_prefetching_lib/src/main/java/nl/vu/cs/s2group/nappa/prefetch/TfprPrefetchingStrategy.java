@@ -217,6 +217,8 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         for (TfprNode successor : sortedSuccessors) {
             if (successor.tfprScore >= scoreLowerThreshold) {
                 counter++;
+                if (counter == 0) logs.add("Selected the following nodes:");
+                logs.add("#" + counter+ " - " + successor.node.getActivitySimpleName() + " with score " + successor.tfprScore);
                 sortedSuccessorsAboveThreshold.add(successor.node);
                 if (addToAct)
                     Nappa.predictedNextActivityFromActivity.add(successor.node.activityName);
