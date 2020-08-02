@@ -727,6 +727,7 @@ public class Nappa {
         }
         log_f1_data(url, "list_url_prefetched", false);
         list_url_prefetched.add(url);
+        list_url_fn.remove(url);
     }
 
     private static void add_fn_url(String url) {
