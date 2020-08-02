@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,6 +193,22 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         return urls;
     }
 
+    class TfprComparator implements Comparator<TfprNode> {
+
+        @Override
+        public int compare(TfprNode o1, TfprNode o2) {
+            return Float.compare(o1.tfprScore, o2.tfprScore);
+        }
+    }
+
+    class TfprComparator2 implements Comparator<TfprNode> {
+
+        @Override
+        public int compare(TfprNode o1, TfprNode o2) {
+            return Float.compare(o2.tfprScore, o1.tfprScore);
+        }
+    }
+
     /**
      * Take the successors of the current node, sort by their TFPR score and return an array
      * with all the successors that have a TFPR score higher than the lower threshold score.
@@ -207,10 +224,15 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         // sort nodes from the highest TFPR score to the lowest
         //noinspection ConstantConditions We do not add null values to the map
         List<TfprNode> sortedSuccessors = graph.graph.get(currentNode.activityName).successors;
+        List<TfprNode> sortedSuccessors1 = graph.graph.get(currentNode.activityName).successors;
+        List<TfprNode> sortedSuccessors2 = graph.graph.get(currentNode.activityName).successors;
         logs.add("Successors before the sort " + sortedSuccessors.toString());
-        Collections.sort(sortedSuccessors, (node1, node2) -> (int) (node1.tfprScore - node2.tfprScore));
+//        Not working for some reason. I am sad. I am tired. I want to sleep.
+        Collections.sort(sortedSuccessors1, new TfprComparator());
+        logs.add("Successors sorted by score N1 - N2 are " + sortedSuccessors1.toString());
+        Collections.sort(sortedSuccessors2, new TfprComparator2());
+        logs.add("Successors sorted by score N2 - N1 are " + sortedSuccessors2.toString());
 
-        logs.add("Successors sorted by score are " + sortedSuccessors.toString());
         // filter out all nodes with low TFPR score
         List<ActivityNode> sortedSuccessorsAboveThreshold = new ArrayList<>();
         int counter = 0;
