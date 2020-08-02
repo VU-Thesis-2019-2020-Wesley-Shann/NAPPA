@@ -309,9 +309,9 @@ public class Nappa {
                 "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
         poolExecutor.schedule(()->{
-            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity");
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs");
             logStrategyAccuracy(activity.getClass().getCanonicalName());
-        }, 150, TimeUnit.MILLISECONDS);
+        }, 400, TimeUnit.MILLISECONDS);
         previousActivityName = currentActivityName;
         currentActivityName = activity.getClass().getCanonicalName();
         //SHOULD PREFETCH IFF THE USER IS MOVING FORWARD
@@ -330,9 +330,11 @@ public class Nappa {
             }
 
             poolExecutor.schedule(() -> {
+                Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - starting new prediction");
                 Log.d(LOG_TAG, "Current node - currentActivityName - " + currentActivityName);
                 Log.d(LOG_TAG, "Current node - activityGraph.getCurrent() - " + (activityGraph.getCurrent() != null ? activityGraph.getCurrent().activityName : null));
                 List<String> topNUrls = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
+                Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - finished new prediction");
                 madePrediction = true;
                 for (String url : topNUrls) {
                     Log.d(LOG_TAG, "TO_BE_PREF " + url);
@@ -340,7 +342,7 @@ public class Nappa {
                 if (prefetchEnabled) {
                     prefetchUrls(topNUrls);
                 }
-            }, 300, TimeUnit.MILLISECONDS);
+            }, 500, TimeUnit.MILLISECONDS);
         }
         Log.d(LOG_TAG, "STATS " + "Number of requests not prefetched: " + requestNP);
         Log.d(LOG_TAG, "STATS " + "Number of requests prefetched: " + requestP);
