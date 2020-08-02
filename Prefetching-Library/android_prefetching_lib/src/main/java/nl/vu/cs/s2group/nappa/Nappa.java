@@ -278,7 +278,7 @@ public class Nappa {
             Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from activity - start");
             if (predictedNextActivityFromActivity != null && predictedNextActivityFromActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
-                        "checking prediction VS current activity");
+                        "checking prediction VS current activity for activities");
                 if (predictedNextActivityFromActivity.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
                     Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
@@ -307,12 +307,12 @@ public class Nappa {
             Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - from extra - start");
             if (predictedNextActivityFromExtra != null && predictedNextActivityFromExtra.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
-                        "checking prediction VS current activity");
+                        "checking prediction VS current activity for extras");
                 if (predictedNextActivityFromExtra.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
-                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
+                    Log.d(strategyIntent.getClass().getSimpleName(), " - MetricStrategyAccuracy -  Prediction was a hit");
                 } else {
-                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a miss");
+                    Log.d(strategyIntent.getClass().getSimpleName(), " - MetricStrategyAccuracy - Prediction was a miss");
                     strategyPredictionMisses++;
                 }
                 predictedNextActivityFromExtra = new ArrayList<>();
