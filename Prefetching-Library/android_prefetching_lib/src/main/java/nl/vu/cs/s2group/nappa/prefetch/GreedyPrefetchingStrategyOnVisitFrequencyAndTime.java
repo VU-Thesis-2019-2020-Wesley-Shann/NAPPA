@@ -72,12 +72,14 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+
+        boolean addToAct = Nappa.runningPredictionFromActivity;
         Nappa.strategyPredictionExecutionCount++;
-        Log.d(LOG_TAG, "MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+        Log.d(LOG_TAG, "MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + addToAct + "; extra = " + !addToAct);
 
         if (node.successors.size() == 0) {
             Nappa.strategyPredictionNoSuccessor++;
-            Log.d(LOG_TAG, "MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+            Log.d(LOG_TAG, "MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + addToAct + "; extra = " + !addToAct);
         }
         runCount++;
         recursionCount = 0;
@@ -92,11 +94,11 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
         already_visited_successors = new ArrayList<>();
         List<String> urls;
         try {
-            urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>());
+            urls = getTopNUrlToPrefetchForNode(node, 1, new ArrayList<>(), addToAct);
             wasSuccessful = true;
         } catch (Exception e) {
             Nappa.strategyPredictionException++;
-            logs.add("MetricStrategyAccuracy inc exception count" + Nappa.strategyPredictionException + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+            logs.add("MetricStrategyAccuracy inc exception count" + Nappa.strategyPredictionException + " | act = " + addToAct + "; extra = " + !addToAct);
             urls = new ArrayList<>();
             wasSuccessful = false;
             logs.add("Something wrong happened: ");
@@ -110,17 +112,17 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        logStrategyExecutionDuration(node, startTime);
         if (
                 (
-                        (Nappa.runningPredictionFromActivity && Nappa.predictedNextActivityFromActivity.size() == 0) ||
-                                (Nappa.runningPredictionFromExtra && Nappa.predictedNextActivityFromExtra.size() == 0)
+                        (addToAct && Nappa.predictedNextActivityFromActivity.size() == 0) ||
+                                (!addToAct && Nappa.predictedNextActivityFromExtra.size() == 0)
                 )
                         && node.successors.size() > 0) {
             Nappa.strategyPredictionInsufficientScore++;
-            Log.d(LOG_TAG, "MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+            Log.d(LOG_TAG, "MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + addToAct + "; extra = " + !addToAct);
         }
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }
-        Log.d(LOG_TAG, "Next visited child will be " + (Nappa.runningPredictionFromActivity ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
+        Log.d(LOG_TAG, "Next visited child will be " + (addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
         Log.d(LOG_TAG, "==================================");
 
         return urls;
@@ -150,7 +152,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
      * @param urlList     The list of URLs to prefetch
      * @return The {@code urlList} after completing all recursions
      */
-    private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList) {
+    private List<String> getTopNUrlToPrefetchForNode(@NonNull ActivityNode node, float parentScore, List<String> urlList, boolean addToAct) {
         recursionCount++;
         logs.add("------------- Recursion #" + recursionCount + " -----------");
         logs.add("Best successors so far " + already_visited_successors.toString());
@@ -216,7 +218,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                 logs.add("Best successor has score " + bestSuccessorScore + " which is lower than the acceptable threshold of " + scoreLowerThreshold);
             return urlList;
         }
-        if (Nappa.runningPredictionFromActivity)
+        if (addToAct)
             Nappa.predictedNextActivityFromActivity.add(bestSuccessor.activityName);
         else Nappa.predictedNextActivityFromExtra.add(bestSuccessor.activityName);
 
@@ -235,6 +237,6 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
         // Verifies if there is any URL budget left
         if (urlList.size() >= maxNumberOfUrlToPrefetch) return urlList;
-        return getTopNUrlToPrefetchForNode(bestSuccessor, bestSuccessorScore, urlList);
+        return getTopNUrlToPrefetchForNode(bestSuccessor, bestSuccessorScore, urlList, addToAct);
     }
 }
