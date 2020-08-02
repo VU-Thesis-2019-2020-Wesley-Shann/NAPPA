@@ -270,6 +270,7 @@ public class Nappa {
 
     private static void logStrategyAccuracy(String navigatedToActivity) {
         if (madePrediction) {
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - start");
             if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
                         "checking prediction VS current activity");
@@ -291,6 +292,7 @@ public class Nappa {
                     Nappa.strategyPredictionNoSuccessor,
                     Nappa.strategyPredictionInsufficientScore,
                     Nappa.strategyPredictionException);
+            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs - finished");
         }
     }
 
@@ -309,7 +311,6 @@ public class Nappa {
                 "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
         poolExecutor.schedule(()->{
-            Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity - logs");
             logStrategyAccuracy(activity.getClass().getCanonicalName());
         }, 400, TimeUnit.MILLISECONDS);
         previousActivityName = currentActivityName;
@@ -453,10 +454,10 @@ public class Nappa {
 
                 // Begin Generating URL Candidates
                 poolExecutor.schedule(() -> {
-                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - start");
+                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- start");
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
                     madePrediction = true;
-                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - end");
+                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - notifyExtras- end");
                     for (String url : toBePrefetched) {
                         Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);
                     }
