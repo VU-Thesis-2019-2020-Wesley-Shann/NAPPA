@@ -25,7 +25,7 @@ public class InterActivity extends AppCompatActivity {
         kabulButton.setOnClickListener(view -> {
             Intent intent = new Intent(this, WeatherActivity.class);
             intent.putExtra("capital", "Kabul");
-            Nappa.notifyExtra("capital", "Kabul");
+            Nappa.notifyExtras(intent.getExtras());
             startActivity(intent);
         });
         Button sessionButton = findViewById(R.id.button_session);

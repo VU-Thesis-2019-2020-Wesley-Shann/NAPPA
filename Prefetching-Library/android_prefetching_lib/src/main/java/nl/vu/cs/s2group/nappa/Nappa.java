@@ -282,6 +282,7 @@ public class Nappa {
                 "fromActivity = " + currentActivityName + ", \n" +
                 "predictedNextActivity = " + predictedNextActivity.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
+        Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - setCurrentActivity");
         if (madePrediction) {
             if (predictedNextActivity != null && predictedNextActivity.size() > 0) {
                 Log.d(LOG_TAG, "setCurrentActivity - MetricStrategyAccuracy - " +
@@ -444,7 +445,9 @@ public class Nappa {
 
                 // Begin Generating URL Candidates
                 poolExecutor.schedule(() -> {
+                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - start");
                     List<String> toBePrefetched = strategyIntent.getTopNUrlToPrefetchForNode(activityGraph.getCurrent(), 2);
+                    Log.d(LOG_TAG, "PREFETCH_ON_EXTRA - end");
                     for (String url : toBePrefetched) {
                         Log.d(LOG_TAG, "PREFSTRAT2 " + "URL: " + url);
                     }

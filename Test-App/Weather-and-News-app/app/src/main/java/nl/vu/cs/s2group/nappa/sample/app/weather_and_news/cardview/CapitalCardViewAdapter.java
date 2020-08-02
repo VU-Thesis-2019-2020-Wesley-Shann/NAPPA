@@ -36,7 +36,7 @@ public class CapitalCardViewAdapter extends RecyclerView.Adapter<CapitalCardView
         holder.view.setOnClickListener(view -> {
             Intent intent = new Intent(view.getContext(), CityDetailsActivity.class);
             intent.putExtra("capital", capital.city);
-            Nappa.notifyExtra("capital", capital.city);
+            Nappa.notifyExtras(intent.getExtras());
             view.getContext().startActivity(intent);
         });
     }

@@ -29,7 +29,7 @@ public class CityDetailsActivity extends AppCompatActivity {
         weatherButton.setOnClickListener((view) -> {
             Intent intent = new Intent(this, WeatherActivity.class);
             intent.putExtra("capital", city);
-            Nappa.notifyExtra("capital", city);
+            Nappa.notifyExtras(intent.getExtras());
             startActivity(intent);
         });
     }
