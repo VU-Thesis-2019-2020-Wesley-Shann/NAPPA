@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 
 import nl.vu.cs.s2group.nappa.Nappa;
 import nl.vu.cs.s2group.nappa.graph.ActivityNode;
@@ -111,7 +110,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
                     Log.d(LOG_TAG, log);
                 }
                 Log.d(LOG_TAG, "Node has no successor");
-                Log.d(LOG_TAG, "Next visited child will be " +(addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
+                Log.d(LOG_TAG, "Next visited child will be " + (addToAct ? Nappa.predictedNextActivityFromActivity.toString() : Nappa.predictedNextActivityFromExtra.toString()) + "\n");
                 Log.d(LOG_TAG, "==================================");
                 return new ArrayList<>();
             }
@@ -193,15 +192,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         return urls;
     }
 
-    class TfprComparator implements Comparator<TfprNode> {
-
-        @Override
-        public int compare(TfprNode o1, TfprNode o2) {
-            return Float.compare(o1.tfprScore, o2.tfprScore);
-        }
-    }
-
-    class TfprComparator2 implements Comparator<TfprNode> {
+    static class TfprComparator implements Comparator<TfprNode> {
 
         @Override
         public int compare(TfprNode o1, TfprNode o2) {
@@ -224,14 +215,10 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
         // sort nodes from the highest TFPR score to the lowest
         //noinspection ConstantConditions We do not add null values to the map
         List<TfprNode> sortedSuccessors = graph.graph.get(currentNode.activityName).successors;
-        List<TfprNode> sortedSuccessors1 = graph.graph.get(currentNode.activityName).successors;
-        List<TfprNode> sortedSuccessors2 = graph.graph.get(currentNode.activityName).successors;
         logs.add("Successors before the sort " + sortedSuccessors.toString());
 //        Not working for some reason. I am sad. I am tired. I want to sleep.
-        Collections.sort(sortedSuccessors1, new TfprComparator());
-        logs.add("Successors sorted by score N1 - N2 are " + sortedSuccessors1.toString());
-        Collections.sort(sortedSuccessors2, new TfprComparator2());
-        logs.add("Successors sorted by score N2 - N1 are " + sortedSuccessors2.toString());
+        Collections.sort(sortedSuccessors, new TfprComparator());
+        logs.add("Successors sorted by highest to lowest score (N2 - N1 comparator) are " + sortedSuccessors.toString());
 
         // filter out all nodes with low TFPR score
         List<ActivityNode> sortedSuccessorsAboveThreshold = new ArrayList<>();
@@ -240,7 +227,7 @@ public class TfprPrefetchingStrategy extends AbstractPrefetchingStrategy {
             if (successor.tfprScore >= scoreLowerThreshold) {
                 counter++;
                 if (counter == 0) logs.add("Selected the following nodes:");
-                logs.add("#" + counter+ " - " + successor.node.getActivitySimpleName() + " with score " + successor.tfprScore);
+                logs.add("#" + counter + " - " + successor.node.getActivitySimpleName() + " with score " + successor.tfprScore);
                 sortedSuccessorsAboveThreshold.add(successor.node);
                 if (addToAct)
                     Nappa.predictedNextActivityFromActivity.add(successor.node.activityName);
