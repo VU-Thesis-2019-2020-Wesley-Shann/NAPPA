@@ -73,7 +73,12 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //            e.printStackTrace();
 //        }
         Nappa.strategyPredictionExecutionCount++;
-        if (node.successors.size() == 0) Nappa.strategyPredictionNoSuccessor++;
+        Log.d(LOG_TAG, "MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+
+        if (node.successors.size() == 0) {
+            Nappa.strategyPredictionNoSuccessor++;
+            Log.d(LOG_TAG, "MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+        }
         runCount++;
         recursionCount = 0;
         logs = new ArrayList<>();
@@ -91,6 +96,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
             wasSuccessful = true;
         } catch (Exception e) {
             Nappa.strategyPredictionException++;
+            logs.add("MetricStrategyAccuracy inc exception count" + Nappa.strategyPredictionException + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
             urls = new ArrayList<>();
             wasSuccessful = false;
             logs.add("Something wrong happened: ");
@@ -107,7 +113,10 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                         (Nappa.runningPredictionFromActivity && Nappa.predictedNextActivityFromActivity.size() == 0) ||
                                 (Nappa.runningPredictionFromExtra && Nappa.predictedNextActivityFromExtra.size() == 0)
                 )
-                        && node.successors.size() > 0) Nappa.strategyPredictionInsufficientScore++;
+                        && node.successors.size() > 0) {
+            Nappa.strategyPredictionInsufficientScore++;
+            Log.d(LOG_TAG, "MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + Nappa.runningPredictionFromActivity + "; extra = " + Nappa.runningPredictionFromExtra);
+        }
         for (String log : logs) {
             Log.d(LOG_TAG, log);
         }

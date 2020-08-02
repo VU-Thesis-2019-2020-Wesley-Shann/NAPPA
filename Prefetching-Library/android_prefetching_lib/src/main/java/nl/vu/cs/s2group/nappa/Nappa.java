@@ -281,9 +281,9 @@ public class Nappa {
                         "checking prediction VS current activity for activities");
                 if (predictedNextActivityFromActivity.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
-                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a hit");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc hits count" + Nappa.strategyPredictionHits + " | from act");
                 } else {
-                    Log.d(strategyIntent.getClass().getSimpleName(), "Prediction was a miss");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses  + " | from ext");
                     strategyPredictionMisses++;
                 }
                 predictedNextActivityFromActivity = new ArrayList<>();
@@ -310,9 +310,9 @@ public class Nappa {
                         "checking prediction VS current activity for extras");
                 if (predictedNextActivityFromExtra.contains(navigatedToActivity)) {
                     strategyPredictionHits++;
-                    Log.d(strategyIntent.getClass().getSimpleName(), " - MetricStrategyAccuracy -  Prediction was a hit");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc hits count" + Nappa.strategyPredictionHits + " | from extra");
                 } else {
-                    Log.d(strategyIntent.getClass().getSimpleName(), " - MetricStrategyAccuracy - Prediction was a miss");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses  + " | from extra");
                     strategyPredictionMisses++;
                 }
                 predictedNextActivityFromExtra = new ArrayList<>();
