@@ -717,7 +717,7 @@ public class Nappa {
         int falseNegative = Nappa.list_url_fn.size();
         int falsePositive = 0;
         for (String prefetchedUrls : Nappa.list_url_prefetched) {
-            if (!Nappa.list_url_intercepted.contains(prefetchedUrls)) falsePositive++;
+            if (!(Nappa.list_url_intercepted.contains(prefetchedUrls) && Nappa.list_url_tp.contains(prefetchedUrls))) falsePositive++;
         }
         MetricPrefetchingAccuracy.log(Nappa.metricPrefetchingAccuracyID, truePositive, falsePositive, falseNegative);
     }
