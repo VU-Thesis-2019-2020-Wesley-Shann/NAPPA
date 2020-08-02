@@ -41,7 +41,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 
     List<String> logs;
 
-    private int runCount = 0;
+//    private int runCount = 0;
     private int recursionCount;
 
     @Override
@@ -74,20 +74,20 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
 //        }
 
         boolean addToAct = Nappa.runningPredictionFromActivity;
+        logs = new ArrayList<>();
         Nappa.strategyPredictionExecutionCount++;
-        Log.d(LOG_TAG, "MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + addToAct + "; extra = " + !addToAct);
+//        runCount++;
+        recursionCount = 0;
+        logs.add("==================================");
+        logs.add("Starting Run #" + Nappa.strategyPredictionExecutionCount);
+        logs.add("----------------------------------");
+        logs.add("Node data " + node.toString());
+        logs.add("MetricStrategyAccuracy inc execution count" + Nappa.strategyPredictionExecutionCount + " | act = " + addToAct + "; extra = " + !addToAct);
 
         if (node.successors.size() == 0) {
             Nappa.strategyPredictionNoSuccessor++;
-            Log.d(LOG_TAG, "MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + addToAct + "; extra = " + !addToAct);
+            logs.add("MetricStrategyAccuracy inc no sucessor count" + Nappa.strategyPredictionNoSuccessor + " | act = " + addToAct + "; extra = " + !addToAct);
         }
-        runCount++;
-        recursionCount = 0;
-        logs = new ArrayList<>();
-        Log.d(LOG_TAG, "==================================");
-        Log.d(LOG_TAG, "Starting Run #" + runCount);
-        Log.d(LOG_TAG, "----------------------------------");
-        Log.d(LOG_TAG, "Node data " + node.toString());
         boolean wasSuccessful;
         long startTime = System.nanoTime();
 //        long startTime = System.currentTimeMillis();
@@ -117,7 +117,7 @@ public class GreedyPrefetchingStrategyOnVisitFrequencyAndTime extends AbstractPr
                 )
                         && node.successors.size() > 0) {
             Nappa.strategyPredictionInsufficientScore++;
-            Log.d(LOG_TAG, "MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + addToAct + "; extra = " + !addToAct);
+            logs.add("MetricStrategyAccuracy inc insufficient score count" + Nappa.strategyPredictionInsufficientScore + " | act = " + addToAct + "; extra = " + !addToAct);
         }
         for (String log : logs) {
             Log.d(LOG_TAG, log);
