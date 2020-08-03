@@ -269,7 +269,7 @@ public class Nappa {
     public static int strategyPredictionExecutionCount = 0;
     static boolean madePredictionFromActivity = false;
     static boolean madePredictionFromExtra = false;
-//    public static boolean runningPredictionFromExtra = false;
+    //    public static boolean runningPredictionFromExtra = false;
 //    public static boolean runningPredictionFromActivity = false;
     public static boolean isLastIssuedRunFromAct = false;
 
@@ -284,7 +284,7 @@ public class Nappa {
                     strategyPredictionHits++;
                     Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc hits count" + Nappa.strategyPredictionHits + " | from act");
                 } else {
-                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses  + " | from ext");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses + " | from ext");
                     strategyPredictionMisses++;
                 }
                 predictedNextActivityFromActivity = new ArrayList<>();
@@ -313,7 +313,7 @@ public class Nappa {
                     strategyPredictionHits++;
                     Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc hits count" + Nappa.strategyPredictionHits + " | from extra");
                 } else {
-                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses  + " | from extra");
+                    Log.d(strategyIntent.getClass().getSimpleName(), "MetricStrategyAccuracy inc misses count" + Nappa.strategyPredictionMisses + " | from extra");
                     strategyPredictionMisses++;
                 }
                 predictedNextActivityFromExtra = new ArrayList<>();
@@ -351,9 +351,9 @@ public class Nappa {
                 "predictedNextActivityFromExtra = " + predictedNextActivityFromExtra.toString() + ", \n" +
                 "activity.getClass().getCanonicalName() = " + activity.getClass().getCanonicalName() + ", \n");
 //        poolExecutor.schedule(()->{
-            logStrategyAccuracyFromActivity(activity.getClass().getCanonicalName());
+        logStrategyAccuracyFromActivity(activity.getClass().getCanonicalName());
 //        }, 50, TimeUnit.MILLISECONDS);
-        poolExecutor.schedule(()->{
+        poolExecutor.schedule(() -> {
             logStrategyAccuracyFromExtra(activity.getClass().getCanonicalName());
         }, 400, TimeUnit.MILLISECONDS);
         previousActivityName = currentActivityName;
@@ -806,7 +806,7 @@ public class Nappa {
                 // Ensure a that the request is both prefetched and Fresh (not stale beyond 30000 Milliseconds)
                 if (prefetchRequest.contains(request.url().toString()) &&
                         (new Date().getTime() - prefetchRequest.get(request.url().toString())) < 30000L) {
-                    Log.d(LOG_TAG, "REQ_PREFETCHING " + "discarded");
+                    Log.d(LOG_TAG, "interceptor_finished : return_type #1 : request discarded");
                     return null;
                 } else {
                     Log.d(LOG_TAG, "REQ_PREFETCHING " + "done");
@@ -853,6 +853,7 @@ public class Nappa {
                         requestP++;
                     }
                     Log.d(LOG_TAG, "CONTENT " + cachedResp.body);
+                    Log.d(LOG_TAG, "interceptor_finished : return_type #2 : request served from cache");
 
                     // Return the Cached Response
                     return new Response.Builder().body(
@@ -945,6 +946,7 @@ public class Nappa {
                     Float timeToHandle = (response.receivedResponseAtMillis() - response.sentRequestAtMillis()) / 1000f;
                     responseLruCache.put(request.url().toString(), new SimpleResponse(response.body().contentType().toString(), response.body().string(), timeToHandle));
                     cachedResp = responseLruCache.get(request.url().toString());
+                    Log.d(LOG_TAG, "interceptor_finished : return_type #3 : request served from remote and added to cache");
                     return new Response.Builder().body(
                             ResponseBody.create(MediaType.parse(cachedResp.contentType), cachedResp.body.getBytes()))
                             .request(request)
@@ -960,7 +962,11 @@ public class Nappa {
                 Log.d(LOG_TAG, "Interceptor exiting with exception " + exception.toString());
                 exception.printStackTrace();
             }
-            Log.d(LOG_TAG, response != null ? "Return intercepted response after exception" : "Returning new response after exception");
+            if (response == null) {
+                Log.d(LOG_TAG, "interceptor_finished : return_type #4 : interceptor failed, resuming the request chain with the original request");
+            } else {
+                Log.d(LOG_TAG, "interceptor_finished : return_type #5 : interceptor failed but response was fetched, return this response");
+            }
             return response != null ? response : chain.proceed(chain.request());
         }
     }
